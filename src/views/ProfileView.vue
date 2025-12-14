@@ -4,7 +4,7 @@
 </div>
 <center>
     <img style="width: 50vw; max-width: 300px;" v-if="photoUrl" :src="photoUrl" alt="Профильное фото" />
-    <h2 style="color: white; margin-top: 50vw;">Whsxg</h2>
+    <h2 style="color: white; margin-top: 50vw;">{{ user }}</h2>
 </center>
 
 <h3>Your Rewards:</h3>
