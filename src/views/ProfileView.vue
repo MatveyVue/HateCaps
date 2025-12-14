@@ -4,7 +4,7 @@
 </div>
 <center>
     <img class="profile-img" src="https://github.com/MatveyVue/gift/blob/main/Anonim.png?raw=true">
-    <h2 style="color: white;">{{ user }}</h2>
+    <h2 style="color: white; margin-top: -10px;">{{ user }}</h2>
 </center>
 
 <h3>Your Rewards:</h3>
