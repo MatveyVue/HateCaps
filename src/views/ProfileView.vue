@@ -10,7 +10,9 @@
 <h3>Your Rewards:</h3>
 <div class="rewards">
     <img class="channel" src="https://github.com/MatveyVue/testcap/blob/main/scmd69.jpg?raw=true">
+  <a style="text-decoration: none; color: white;" href="https://t.me/+sc77S2Dsuwc5MGNk">
     <p class="channel-name">$CMD69</p>
+  </a>
     <p class="stars">{{ stars }}</p>
 </div>
 
