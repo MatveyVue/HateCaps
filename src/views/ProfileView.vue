@@ -1,63 +1,30 @@
 <template>
-<div id="preloader">
-  <div style="" class="loader">loading</div>
-</div>
+  <!-- ваш шаблон -->
+  <div id="preloader">
+    <div class="loader">loading</div>
+  </div>
 
-<center>
+  <center>
     <img v-if="photoUrl" :src="photoUrl" alt="Профильное фото" />
     <h2 style="color: white; margin-top: 50vw;">{{ user }}</h2>
-</center>
+  </center>
 
-<h3>Your Rewards:</h3>
-<div class="rewards">
-<img src=""></img>
-<p>CMD69</p>
-<p>{{ stars }}</p>
-</div>
+  <h3>Your Rewards:</h3>
+  <div class="rewards">
+    <img src="" />
+    <p>CMD69</p>
+    <p>{{ stars }}</p>
+  </div>
 
-<div class="bar">
-<div class="btn-container">
-<RouterLink to="market">
-    <button class="market">
-        <img style="position: absolute; margin-left: -17px; margin-top: 5px;" src="https://github.com/MatveyVue/icopn/blob/main/Market.png?raw=true" width="33px"></img>
-        <p style="margin-top: 40px; color: white;">Market</p>
-    </button>
-</RouterLink>
-<RouterLink to="/">
-    <button class="leaders">
-        <img style="position: absolute; margin-left: -18px;" src="https://github.com/MatveyVue/icopn/blob/main/LeaderBoard.png?raw=true" width="40px"></img>
-        <p style="margin-top: 40px; color: white;">Top</p>
-    </button>
-</RouterLink>
-    <button class="profile">
-        <img style="position: absolute; margin-left: -18px;" src="https://github.com/MatveyVue/icopn/blob/main/ProfileActive.png?raw=true" width="35px"></img>
-        <p style="margin-top: 40px; color: rgb(25, 122, 207);">Profile</p>
-    </button>
-</div>
-</div>
+  <!-- остальной шаблон -->
 </template>
-    
-<script setup>
-import { caps, profile, open, top1, top2, top3 } from '../script/home.js'; 
-console.log(profile.value); 
-
-window.addEventListener('load', function() {
-    // Убираем стандартное поведение при загрузке, т.к. будем использовать setTimeout
-});
-
-// Устанавливаем таймер на 10 секунд (10000 миллисекунд)
-setTimeout(function() {
-    const preloader = document.getElementById('preloader');
-    if (preloader) { // Проверяем, существует ли элемент
-        preloader.classList.add('hidden'); // Добавляем класс для скрытия
-    }
-}, 5000); // 10000 миллисекунд = 10 секунд
-</script>
 
 <script setup>
-import { initializeApp } from 'firebase/app';
-import { getFirestore, doc, getDoc } from 'firebase/firestore';
+import { ref, onMounted } from 'vue'
+import { initializeApp } from 'firebase/app'
+import { getFirestore, doc, getDoc } from 'firebase/firestore'
 
+// Конфигурация Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyAC5LEXiZ-_LcPg3pUlb9tuDzQvUptHF7s",
   authDomain: "giftcaps.firebaseapp.com",
@@ -67,53 +34,51 @@ const firebaseConfig = {
   messagingSenderId: "762854065131",
   appId: "1:762854065131:web:116cf5343de1d1e353cfae",
   measurementId: "G-LK9N0SKT0P"
-};
+}
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+// Инициализация Firebase
+const app = initializeApp(firebaseConfig)
+const db = getFirestore(app)
 
-export default {
-  data() {
-    const userData = window.Telegram.WebApp.initDataUnsafe.user || {};
-    return {
-      user: userData.username || null,
-      stars: 0,
-    };
-  },
- mounted() {
-  const userData = window.Telegram?.WebApp?.initDataUnsafe?.user;
+// реактивные переменные
+const user = ref(null)
+const stars = ref(0)
+const photoUrl = ref(null) // если есть фото, добавьте сюда
+
+// Получение данных пользователя из WebApp
+onMounted(() => {
+  const userData = window.Telegram?.WebApp?.initDataUnsafe?.user
   if (userData && userData.username) {
-    this.user = userData.username;
-    this.loadStars();
+    user.value = userData.username
+    loadStars()
   } else {
-    console.log('Пользователь пока не определен или данных нет');
+    console.log('Пользователь еще не определен или данных нет')
   }
-},
-  methods: {
-    async loadStars() {
-      if (!this.user) {
-        this.stars = 0;
-        console.log('Пользователь не определён');
-        return;
-      }
+})
 
-      try {
-        const userDocRef = doc(db, 'users', this.user);
-        const userDocSnap = await getDoc(userDocRef);
+// Функция загрузки звезд
+async function loadStars() {
+  if (!user.value) {
+    stars.value = 0
+    console.log('Пользователь не определен')
+    return
+  }
 
-        if (userDocSnap.exists()) {
-          const data = userDocSnap.data();
-          this.stars = data.stars || 0;
-          console.log('Данные получены:', data);
-        } else {
-          this.stars = 0;
-          console.log('Пользователь не найден в базе');
-        }
-      } catch (error) {
-        console.error('Ошибка при получении данных:', error);
-        this.stars = 0;
-      }
-    },
-  },
-};
+  try {
+    const userDocRef = doc(db, 'users', user.value)
+    const userDocSnap = await getDoc(userDocRef)
+
+    if (userDocSnap.exists()) {
+      const data = userDocSnap.data()
+      stars.value = data.stars || 0
+      console.log('Данные получены:', data)
+    } else {
+      stars.value = 0
+      console.log('Пользователь не найден в базе')
+    }
+  } catch (error) {
+    console.error('Ошибка при получении данных:', error)
+    stars.value = 0
+  }
+}
 </script>
