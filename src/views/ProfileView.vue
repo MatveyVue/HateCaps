@@ -19,7 +19,6 @@ import { ref, onMounted } from 'vue'
 import { initializeApp } from 'firebase/app'
 import { getFirestore, doc, getDoc } from 'firebase/firestore'
 
-// Конфигурация Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyAC5LEXiZ-_LcPg3pUlb9tuDzQvUptHF7s",
   authDomain: "giftcaps.firebaseapp.com",
@@ -31,16 +30,13 @@ const firebaseConfig = {
   measurementId: "G-LK9N0SKT0P"
 }
 
-// Инициализация Firebase
 const app = initializeApp(firebaseConfig)
 const db = getFirestore(app)
 
-// реактивные переменные
 const user = ref(null)
 const stars = ref(0)
-const photoUrl = ref(null) // если есть фото, добавьте сюда
 
-// Получение данных пользователя из WebApp
+// Получение данных пользователя
 onMounted(() => {
   const userData = window.Telegram?.WebApp?.initDataUnsafe?.user
   if (userData && userData.username) {
@@ -51,11 +47,9 @@ onMounted(() => {
   }
 })
 
-// Функция загрузки звезд
 async function loadStars() {
   if (!user.value) {
     stars.value = 0
-    console.log('Пользователь не определен')
     return
   }
 
@@ -65,14 +59,14 @@ async function loadStars() {
 
     if (userDocSnap.exists()) {
       const data = userDocSnap.data()
+      console.log('Данные документа:', data)
       stars.value = data.stars || 0
-      console.log('Данные получены:', data)
     } else {
       stars.value = 0
-      console.log('Пользователь не найден в базе')
+      console.log('Пользователь не найден')
     }
   } catch (error) {
-    console.error('Ошибка при получении данных:', error)
+    console.error('Ошибка получения данных:', error)
     stars.value = 0
   }
 }
