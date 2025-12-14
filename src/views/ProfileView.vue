@@ -1,9 +1,4 @@
 <template>
-  <!-- ваш шаблон -->
-  <div id="preloader">
-    <div class="loader">loading</div>
-  </div>
-
   <center>
     <img v-if="photoUrl" :src="photoUrl" alt="Профильное фото" />
     <h2 style="color: white; margin-top: 50vw;">{{ user }}</h2>
