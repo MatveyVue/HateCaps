@@ -1,23 +1,59 @@
 <template>
-  <center>
-    <img v-if="photoUrl" :src="photoUrl" alt="Профильное фото" />
-    <h2 style="color: white; margin-top: 50vw;">{{ user }}</h2>
-  </center>
+<div id="preloader">
+  <div style="" class="loader">loading</div>
+</div>
+<center>
+    <img style="width: 50vw; max-width: 300px;" v-if="photoUrl" :src="photoUrl" alt="Профильное фото" />
+    <h2 style="color: white; margin-top: 50vw;">Whsxg</h2>
+</center>
 
-  <h3>Your Rewards:</h3>
-  <div class="rewards">
-    <img src="" />
-    <p>CMD69</p>
-    <p>{{ stars }}</p>
-  </div>
+<h3>Your Rewards:</h3>
+<div class="rewards">
+    <img class="channel" src="https://github.com/MatveyVue/testcap/blob/main/scmd69.jpg?raw=true">
+    <p class="channel-name">$CMD69</p>
+    <p class="stars">{{ stars }}</p>
+</div>
 
-  <!-- остальной шаблон -->
+<div class="bar">
+<div class="btn-container">
+<RouterLink to="market">
+    <button class="market">
+        <img style="position: absolute; margin-left: -17px; margin-top: 5px;" src="https://github.com/MatveyVue/icopn/blob/main/Market.png?raw=true" width="33px"></img>
+        <p style="margin-top: 40px; color: white;">Market</p>
+    </button>
+</RouterLink>
+<RouterLink to="/">
+    <button class="leaders">
+        <img style="position: absolute; margin-left: -18px;" src="https://github.com/MatveyVue/icopn/blob/main/LeaderBoard.png?raw=true" width="40px"></img>
+        <p style="margin-top: 40px; color: white;">Top</p>
+    </button>
+</RouterLink>
+    <button class="profile">
+        <img style="position: absolute; margin-left: -18px;" src="https://github.com/MatveyVue/icopn/blob/main/ProfileActive.png?raw=true" width="35px"></img>
+        <p style="margin-top: 40px; color: rgb(25, 122, 207);">Profile</p>
+    </button>
+</div>
+</div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
 import { initializeApp } from 'firebase/app'
 import { getFirestore, doc, getDoc } from 'firebase/firestore'
+import { caps, profile, open, top1, top2, top3 } from '../script/home.js'; 
+console.log(profile.value); 
+
+window.addEventListener('load', function() {
+    // Убираем стандартное поведение при загрузке, т.к. будем использовать setTimeout
+});
+
+// Устанавливаем таймер на 10 секунд (10000 миллисекунд)
+setTimeout(function() {
+    const preloader = document.getElementById('preloader');
+    if (preloader) { // Проверяем, существует ли элемент
+        preloader.classList.add('hidden'); // Добавляем класс для скрытия
+    }
+}, 3000); // 10000 миллисекунд = 10 секунд
 
 const firebaseConfig = {
   apiKey: "AIzaSyAC5LEXiZ-_LcPg3pUlb9tuDzQvUptHF7s",
@@ -39,6 +75,8 @@ const stars = ref(0)
 // Получение данных пользователя
 onMounted(() => {
   const userData = window.Telegram?.WebApp?.initDataUnsafe?.user
+  const photoUrl = userData?.photo_url || null
+  // далее ваш код, например:
   if (userData && userData.username) {
     user.value = userData.username
     loadStars()
