@@ -4,8 +4,16 @@
 </div>
 
 <center>
-    <h1 style="color: white; margin-top: 50vw;">Soon</h1>
+    <img v-if="photoUrl" :src="photoUrl" alt="Профильное фото" />
+    <h2 style="color: white; margin-top: 50vw;">{{ user }}</h2>
 </center>
+
+<h3>Your Rewards:</h3>
+<div class="rewards">
+<img src=""></img>
+<p>CMD69</p>
+<p>{{ stars }}</p>
+</div>
 
 <div class="bar">
 <div class="btn-container">
@@ -44,4 +52,59 @@ setTimeout(function() {
         preloader.classList.add('hidden'); // Добавляем класс для скрытия
     }
 }, 5000); // 10000 миллисекунд = 10 секунд
+</script>
+
+<script>
+import { initializeApp } from 'firebase/app';
+import { getFirestore, doc, getDoc } from 'firebase/firestore';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAC5LEXiZ-_LcPg3pUlb9tuDzQvUptHF7s",
+  authDomain: "giftcaps.firebaseapp.com",
+  databaseURL: "https://giftcaps-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "giftcaps",
+  storageBucket: "giftcaps.firebasestorage.app",
+  messagingSenderId: "762854065131",
+  appId: "1:762854065131:web:116cf5343de1d1e353cfae",
+  measurementId: "G-LK9N0SKT0P"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+export default {
+  data() {
+    const userData = window.Telegram.WebApp.initDataUnsafe.user || {};
+    return {
+      user: userData.username || null,
+      stars: 0,
+    };
+  },
+  mounted() {
+    this.loadStars();
+  },
+  methods: {
+    async loadStars() {
+      if (!this.user) {
+        this.stars = 0;
+        return;
+      }
+
+      try {
+        const userDocRef = doc(db, 'users', this.user);
+        const userDocSnap = await getDoc(userDocRef);
+
+        if (userDocSnap.exists()) {
+          const data = userDocSnap.data();
+          this.stars = data.stars || 0;
+        } else {
+          this.stars = 0; // Пользователь не найден — отображаем 0
+        }
+      } catch (error) {
+        console.error('Ошибка получения данных:', error);
+        this.stars = 0;
+      }
+    },
+  },
+};
 </script>
