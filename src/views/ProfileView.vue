@@ -54,7 +54,7 @@ setTimeout(function() {
 }, 5000); // 10000 миллисекунд = 10 секунд
 </script>
 
-<script>
+<script setup>
 import { initializeApp } from 'firebase/app';
 import { getFirestore, doc, getDoc } from 'firebase/firestore';
 
