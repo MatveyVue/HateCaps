@@ -80,9 +80,15 @@ export default {
       stars: 0,
     };
   },
-  mounted() {
+ mounted() {
+  const userData = window.Telegram?.WebApp?.initDataUnsafe?.user;
+  if (userData && userData.username) {
+    this.user = userData.username;
     this.loadStars();
-  },
+  } else {
+    console.log('Пользователь пока не определен или данных нет');
+  }
+}
   methods: {
     async loadStars() {
       if (!this.user) {
