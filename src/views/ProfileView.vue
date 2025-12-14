@@ -88,7 +88,7 @@ export default {
   } else {
     console.log('Пользователь пока не определен или данных нет');
   }
-}
+},
   methods: {
     async loadStars() {
       if (!this.user) {
