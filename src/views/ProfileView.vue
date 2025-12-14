@@ -3,8 +3,8 @@
   <div style="" class="loader">loading</div>
 </div>
 <center>
-    <img style="width: 50vw; max-width: 300px;" v-if="photoUrl" :src="photoUrl" alt="Профильное фото" />
-    <h2 style="color: white; margin-top: 50vw;">{{ user }}</h2>
+    <img class="profile-img" src="https://github.com/MatveyVue/gift/blob/main/Anonim.png?raw=true">
+    <h2 style="color: white;">{{ user }}</h2>
 </center>
 
 <h3>Your Rewards:</h3>
@@ -40,8 +40,6 @@
 import { ref, onMounted } from 'vue'
 import { initializeApp } from 'firebase/app'
 import { getFirestore, doc, getDoc } from 'firebase/firestore'
-import { caps, profile, open, top1, top2, top3 } from '../script/home.js'; 
-console.log(profile.value); 
 
 window.addEventListener('load', function() {
     // Убираем стандартное поведение при загрузке, т.к. будем использовать setTimeout
@@ -72,11 +70,8 @@ const db = getFirestore(app)
 const user = ref(null)
 const stars = ref(0)
 
-// Получение данных пользователя
 onMounted(() => {
   const userData = window.Telegram?.WebApp?.initDataUnsafe?.user
-  const photoUrl = userData?.photo_url || null
-  // далее ваш код, например:
   if (userData && userData.username) {
     user.value = userData.username
     loadStars()
