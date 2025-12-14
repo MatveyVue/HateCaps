@@ -261,6 +261,12 @@ a {
   margin-top: -38px;
 }
 
+.profile-img {
+  width: 40vw;
+  margin-top: 5vw;
+  max-width: 250px;
+}
+
 .tc {
   bottom: 0;
   position: absolute;
