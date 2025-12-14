@@ -63,7 +63,7 @@ const firebaseConfig = {
   authDomain: "giftcaps.firebaseapp.com",
   databaseURL: "https://giftcaps-default-rtdb.europe-west1.firebasedatabase.app",
   projectId: "giftcaps",
-  storageBucket: "giftcaps.firebasestorage.app",
+  storageBucket: "giftcaps.appspot.com",
   messagingSenderId: "762854065131",
   appId: "1:762854065131:web:116cf5343de1d1e353cfae",
   measurementId: "G-LK9N0SKT0P"
@@ -87,6 +87,7 @@ export default {
     async loadStars() {
       if (!this.user) {
         this.stars = 0;
+        console.log('Пользователь не определён');
         return;
       }
 
@@ -97,11 +98,13 @@ export default {
         if (userDocSnap.exists()) {
           const data = userDocSnap.data();
           this.stars = data.stars || 0;
+          console.log('Данные получены:', data);
         } else {
-          this.stars = 0; // Пользователь не найден — отображаем 0
+          this.stars = 0;
+          console.log('Пользователь не найден в базе');
         }
       } catch (error) {
-        console.error('Ошибка получения данных:', error);
+        console.error('Ошибка при получении данных:', error);
         this.stars = 0;
       }
     },
