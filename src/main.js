@@ -13,6 +13,9 @@ function setupTelegramWebApp() {
   if (!webApp) return
   webApp.ready()
   webApp.expand()
+  if (typeof webApp.disableVerticalSwipe === 'function') {
+    webApp.disableVerticalSwipe()
+  }
 }
 
 function disableZoomGestures() {

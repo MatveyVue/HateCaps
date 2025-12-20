@@ -79,6 +79,8 @@ import { onMounted, ref } from 'vue';
 import { caps, profile, open, top1, top2, top3 } from '../script/home.js'; 
 console.log(profile.value); 
 
+defineOptions({ name: 'home' });
+
 const isLoading = ref(true);
 
 onMounted(() => {

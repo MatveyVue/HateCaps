@@ -6,10 +6,10 @@
   </div>
 </div>
 <RouterView v-slot="{ Component, route }">
-  <KeepAlive include="market">
-    <component :is="Component" v-if="route.name === 'market'" />
+  <KeepAlive include="home,market,profile">
+    <component :is="Component" v-if="['home', 'market', 'profile'].includes(route.name)" />
   </KeepAlive>
-  <component :is="Component" v-if="route.name !== 'market'" />
+  <component :is="Component" v-if="!['home', 'market', 'profile'].includes(route.name)" />
 </RouterView>
 </template>
 

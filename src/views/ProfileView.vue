@@ -1,19 +1,46 @@
 <template>
-<div v-if="isLoading" id="preloader">
-  <div style="" class="loader">loading</div>
-</div>
 <center>
     <img class="profile-img" :src="photoUrl">
     <h2 style="color: white; margin-top: -10px;">{{ user }}</h2>
 </center>
 
-<h3>Your Rewards:</h3>
-<div class="rewards">
-    <img class="channel" src="https://github.com/MatveyVue/testcap/blob/main/scmd69.jpg?raw=true">
-  <a style="text-decoration: none; color: white;" href="https://t.me/+sc77S2Dsuwc5MGNk">
-    <p class="channel-name">$CMD69</p>
-  </a>
-    <p class="stars">{{ stars }}</p>
+<div class="profile-tabs">
+  <button class="tab-btn" :class="{ active: activeTab === 'channel' }" type="button" @click="setTab('channel')">
+    Channel
+  </button>
+  <button class="tab-btn" :class="{ active: activeTab === 'gifts' }" type="button" @click="setTab('gifts')">
+    Gifts
+  </button>
+</div>
+
+<div v-if="activeTab === 'channel'" class="tab-panel">
+  <h3>Your Rewards:</h3>
+  <div class="rewards">
+      <img class="channel" src="https://github.com/MatveyVue/testcap/blob/main/scmd69.jpg?raw=true">
+    <a style="text-decoration: none; color: white;" href="https://t.me/+sc77S2Dsuwc5MGNk">
+      <p class="channel-name">$CMD69</p>
+    </a>
+      <p class="stars">{{ stars }}</p>
+  </div>
+</div>
+
+<div v-else class="tab-panel">
+  <p v-if="giftsLoading" class="empty-text">Loading gifts...</p>
+  <p v-else-if="giftsError" class="error-text">{{ giftsError }}</p>
+  <p v-else-if="gifts.length === 0" class="empty-text">No gifts yet</p>
+  <div v-else class="gifts-wrapper">
+    <div v-for="(gift, index) in gifts" :key="index" class="gifts-container">
+      <img :src="gift.photo_url" style="width:100%; border-radius: 20px;">
+      <p class="title" style="color:white;">{{ gift.title }}</p>
+      <p class="number">#{{ gift.number }}</p>
+      <a :href="gift.webapp_url" target="_blank" rel="noopener" style="display:inline-block; margin-top:8px;">
+        <button class="buy-btn">{{ gift.price }} TON</button>
+      </a>
+    </div>
+  </div>
+  <button v-if="giftsHasMore && !giftsLoading" class="filter-btn" type="button" @click="loadMoreGifts">
+    Load more
+  </button>
 </div>
 
 <div class="bar">
@@ -43,17 +70,7 @@ import { ref, onMounted } from 'vue'
 import { initializeApp } from 'firebase/app'
 import { getFirestore, doc, getDoc } from 'firebase/firestore'
 
-const isLoading = ref(false)
-
-window.addEventListener('load', function() {
-});
-
-setTimeout(function() {
-    const preloader = document.getElementById('preloader');
-    if (preloader) { // Проверяем, существует ли элемент
-        preloader.classList.add('hidden'); // Добавляем класс для скрытия
-    }
-}, 3000); // 10000 миллисекунд = 10 секунд
+defineOptions({ name: 'profile' })
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -72,6 +89,14 @@ const db = getFirestore(app)
 const user = ref(null)
 const photoUrl = ref('https://github.com/MatveyVue/gift/blob/main/Anonim.png?raw=true')
 const stars = ref(0)
+const activeTab = ref('channel')
+const gifts = ref([])
+const giftsLoaded = ref(false)
+const giftsLoading = ref(false)
+const giftsError = ref('')
+const giftsOffset = ref(0)
+const giftsLimit = 50
+const giftsHasMore = ref(true)
 
 onMounted(() => {
   const userData = window.Telegram?.WebApp?.initDataUnsafe?.user
@@ -79,8 +104,11 @@ onMounted(() => {
     user.value = userData.username
     photoUrl.value = userData.photo_url || photoUrl.value
     loadStars()
+    if (activeTab.value === 'gifts') {
+      loadGifts()
+    }
   } else {
-    console.log('Пользователь еще не определен или данных нет')
+    console.log('Р?Р?Р>С?Р·Р?Р?Р°С'РчР>С? РчС%Рч Р?Рч Р?РїС?РчР?РчР>РчР? РёР>Рё Р?Р°Р?Р?С<С: Р?РчС'')
   }
 })
 
@@ -96,15 +124,60 @@ async function loadStars() {
 
     if (userDocSnap.exists()) {
       const data = userDocSnap.data()
-      console.log('Данные документа:', data)
+      console.log('Р"Р°Р?Р?С<Рч Р?Р?РєС?Р?РчР?С'Р°:', data)
       stars.value = data.stars || 0
     } else {
       stars.value = 0
-      console.log('Пользователь не найден')
+      console.log('Р?Р?Р>С?Р·Р?Р?Р°С'РчР>С? Р?Рч Р?Р°Р№Р?РчР?')
     }
   } catch (error) {
-    console.error('Ошибка получения данных:', error)
+    console.error('Р?С?РёР+РєР° РїР?Р>С?С╪РчР?РёС? Р?Р°Р?Р?С<С::', error)
     stars.value = 0
+  }
+}
+
+function setTab(tab) {
+  activeTab.value = tab
+  if (tab === 'gifts' && !giftsLoaded.value) {
+    loadGifts()
+  }
+}
+
+async function loadGifts() {
+  if (!user.value || giftsLoading.value) return
+  giftsLoading.value = true
+  giftsError.value = ''
+  try {
+    const url = `https://api-swiftgifts.vercel.app/api/user_gifts?username=${encodeURIComponent(user.value)}&limit=${giftsLimit}&offset=${giftsOffset.value}`
+    const response = await fetch(url, {
+      headers: {
+        accept: 'application/json',
+        'x-api-key': import.meta.env.VITE_SWIFTGIFTS_API_KEY
+      }
+    })
+    if (!response.ok) {
+      throw new Error(`Gift API error: ${response.status}`)
+    }
+    const data = await response.json()
+    const items = Array.isArray(data) ? data : data.items || []
+    if (giftsOffset.value === 0) {
+      gifts.value = items
+    } else {
+      gifts.value = [...gifts.value, ...items]
+    }
+    giftsOffset.value += items.length
+    giftsHasMore.value = items.length === giftsLimit
+    giftsLoaded.value = true
+  } catch (error) {
+    giftsError.value = error?.message || 'Failed to load gifts'
+  } finally {
+    giftsLoading.value = false
+  }
+}
+
+function loadMoreGifts() {
+  if (giftsHasMore.value) {
+    loadGifts()
   }
 }
 </script>
