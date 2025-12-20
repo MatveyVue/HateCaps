@@ -12,30 +12,47 @@
 
     <div v-if="filtersOpen" class="filters-panel">
       <div class="filter-grid">
-        <select v-model="selectedCollection" class="filter-select" @change="handleCollectionChange">
-          <option value="All">All Collections</option>
-          <option v-for="collection in collectionOptions" :key="collection" :value="collection">
-            {{ collection }}
-          </option>
-        </select>
-        <select v-model="selectedModel" class="filter-select" :disabled="selectedCollection === 'All'">
-          <option value="All">All Models</option>
-          <option v-for="model in modelOptions" :key="model" :value="model">
-            {{ model }}
-          </option>
-        </select>
-        <select v-model="selectedBackdrop" class="filter-select" :disabled="selectedCollection === 'All'">
-          <option value="All">All Backdrops</option>
-          <option v-for="backdrop in backdropOptions" :key="backdrop" :value="backdrop">
-            {{ backdrop }}
-          </option>
-        </select>
-        <select v-model="selectedSymbol" class="filter-select" :disabled="selectedCollection === 'All'">
-          <option value="All">All Symbols</option>
-          <option v-for="symbol in symbolOptions" :key="symbol" :value="symbol">
-            {{ symbol }}
-          </option>
-        </select>
+        <input
+          v-model="selectedCollection"
+          class="filter-input"
+          list="collection-options"
+          placeholder="Collection"
+          @change="handleCollectionChange"
+        />
+        <datalist id="collection-options">
+          <option value="All"></option>
+          <option v-for="collection in collectionOptions" :key="collection" :value="collection"></option>
+        </datalist>
+        <input
+          v-model="selectedModel"
+          class="filter-input"
+          list="model-options"
+          placeholder="Model"
+        />
+        <datalist id="model-options">
+          <option value="All"></option>
+          <option v-for="model in modelOptions" :key="model" :value="model"></option>
+        </datalist>
+        <input
+          v-model="selectedBackdrop"
+          class="filter-input"
+          list="backdrop-options"
+          placeholder="Backdrop"
+        />
+        <datalist id="backdrop-options">
+          <option value="All"></option>
+          <option v-for="backdrop in backdropOptions" :key="backdrop" :value="backdrop"></option>
+        </datalist>
+        <input
+          v-model="selectedSymbol"
+          class="filter-input"
+          list="symbol-options"
+          placeholder="Symbol"
+        />
+        <datalist id="symbol-options">
+          <option value="All"></option>
+          <option v-for="symbol in symbolOptions" :key="symbol" :value="symbol"></option>
+        </datalist>
         <input
           v-model="numberInput"
           class="filter-input"
@@ -154,26 +171,32 @@ const showTop = ref(false)
 
 const rarityIndex = ref(new Map())
 const collectionMeta = ref(new Map())
+const globalAttributes = ref({ models: [], backdrops: [], symbols: [] })
 const pageCache = new Map()
 
 const isInitialLoading = computed(() => loading.value && gifts.value.length === 0)
 
 const previewImageUrl = computed(() => {
-  if (selectedCollection.value === 'All') return ''
-  const meta = collectionMeta.value.get(selectedCollection.value)
+  const collection = normalizeValue(selectedCollection.value)
+  if (collection === 'All') return ''
+  const meta = collectionMeta.value.get(collection)
   if (!meta) return ''
-  const model = selectedModel.value !== 'All' ? selectedModel.value : meta.firstModel
-  if (selectedSymbol.value !== 'All') {
-    return `https://cdn.changes.tg/gifts/patterns/${encodeURIComponent(selectedCollection.value)}/png/${encodeURIComponent(selectedSymbol.value)}.png`
+  const model = normalizeValue(selectedModel.value) !== 'All' ? normalizeValue(selectedModel.value) : meta.firstModel
+  const symbol = normalizeValue(selectedSymbol.value)
+  if (symbol !== 'All') {
+    return `https://cdn.changes.tg/gifts/patterns/${encodeURIComponent(collection)}/png/${encodeURIComponent(symbol)}.png`
   }
   if (!model) return ''
-  return `https://cdn.changes.tg/gifts/models/${encodeURIComponent(selectedCollection.value)}/png/${encodeURIComponent(model)}.png`
+  return `https://cdn.changes.tg/gifts/models/${encodeURIComponent(collection)}/png/${encodeURIComponent(model)}.png`
 })
 
 const selectedModelLabel = computed(() => {
-  if (selectedModel.value !== 'All') return selectedModel.value
-  if (selectedBackdrop.value !== 'All') return selectedBackdrop.value
-  if (selectedSymbol.value !== 'All') return selectedSymbol.value
+  const model = normalizeValue(selectedModel.value)
+  const backdrop = normalizeValue(selectedBackdrop.value)
+  const symbol = normalizeValue(selectedSymbol.value)
+  if (model !== 'All') return model
+  if (backdrop !== 'All') return backdrop
+  if (symbol !== 'All') return symbol
   return 'All Attributes'
 })
 
@@ -182,6 +205,9 @@ function parseRarity(csvText) {
   const index = new Map()
   const meta = new Map()
   const collections = new Set()
+  const models = new Set()
+  const backdrops = new Set()
+  const symbols = new Set()
 
   for (let i = 1; i < lines.length; i += 1) {
     const line = lines[i]
@@ -203,15 +229,18 @@ function parseRarity(csvText) {
     const bucket = index.get(collection)
     if (attrType === 'models') {
       bucket.models.add(attrValue)
+      models.add(attrValue)
       if (!meta.get(collection).firstModel) {
         meta.get(collection).firstModel = attrValue
       }
     }
     if (attrType === 'backdrops') {
       bucket.backdrops.add(attrValue)
+      backdrops.add(attrValue)
     }
     if (attrType === 'symbols') {
       bucket.symbols.add(attrValue)
+      symbols.add(attrValue)
     }
   }
 
@@ -219,36 +248,50 @@ function parseRarity(csvText) {
     collections: Array.from(collections).sort(),
     index,
     meta,
+    global: {
+      models: Array.from(models).sort(),
+      backdrops: Array.from(backdrops).sort(),
+      symbols: Array.from(symbols).sort(),
+    },
   }
 }
 
+function normalizeValue(value) {
+  const trimmed = String(value || '').trim()
+  return trimmed === '' ? 'All' : trimmed
+}
+
 function handleCollectionChange() {
-  if (selectedCollection.value === 'All') {
-    modelOptions.value = []
-    backdropOptions.value = []
-    symbolOptions.value = []
-    selectedModel.value = 'All'
-    selectedBackdrop.value = 'All'
-    selectedSymbol.value = 'All'
+  const collection = normalizeValue(selectedCollection.value)
+  if (collection === 'All' || !rarityIndex.value.has(collection)) {
+    modelOptions.value = globalAttributes.value.models
+    backdropOptions.value = globalAttributes.value.backdrops
+    symbolOptions.value = globalAttributes.value.symbols
     return
   }
 
-  const info = rarityIndex.value.get(selectedCollection.value)
+  const info = rarityIndex.value.get(collection)
   modelOptions.value = info ? Array.from(info.models).sort() : []
   backdropOptions.value = info ? Array.from(info.backdrops).sort() : []
   symbolOptions.value = info ? Array.from(info.symbols).sort() : []
-  selectedModel.value = 'All'
-  selectedBackdrop.value = 'All'
-  selectedSymbol.value = 'All'
+  if (normalizeValue(selectedModel.value) !== 'All' && !info.models.has(selectedModel.value)) {
+    selectedModel.value = 'All'
+  }
+  if (normalizeValue(selectedBackdrop.value) !== 'All' && !info.backdrops.has(selectedBackdrop.value)) {
+    selectedBackdrop.value = 'All'
+  }
+  if (normalizeValue(selectedSymbol.value) !== 'All' && !info.symbols.has(selectedSymbol.value)) {
+    selectedSymbol.value = 'All'
+  }
 }
 
 function buildPayload() {
   const parsedNumber = Number.parseInt(numberInput.value, 10)
   return {
-    name: selectedCollection.value,
-    model: selectedModel.value,
-    symbol: selectedSymbol.value,
-    backdrop: selectedBackdrop.value,
+    name: normalizeValue(selectedCollection.value),
+    model: normalizeValue(selectedModel.value),
+    symbol: normalizeValue(selectedSymbol.value),
+    backdrop: normalizeValue(selectedBackdrop.value),
     number: Number.isFinite(parsedNumber) ? parsedNumber : null,
   }
 }
@@ -284,10 +327,15 @@ async function fetchNextPage() {
 }
 
 function applyFilters() {
+  selectedCollection.value = normalizeValue(selectedCollection.value)
+  selectedModel.value = normalizeValue(selectedModel.value)
+  selectedBackdrop.value = normalizeValue(selectedBackdrop.value)
+  selectedSymbol.value = normalizeValue(selectedSymbol.value)
   gifts.value = []
   currentPage.value = 0
   allLoaded.value = false
   pageCache.clear()
+  filtersOpen.value = false
   fetchNextPage()
 }
 
@@ -315,10 +363,11 @@ function scrollToTop() {
 }
 
 onMounted(() => {
-  const { collections, index, meta } = parseRarity(rarityCsv)
+  const { collections, index, meta, global } = parseRarity(rarityCsv)
   collectionOptions.value = collections
   rarityIndex.value = index
   collectionMeta.value = meta
+  globalAttributes.value = global
   handleCollectionChange()
   applyFilters()
   window.addEventListener('scroll', handleWindowScroll, { passive: true })
