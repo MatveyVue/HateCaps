@@ -64,7 +64,7 @@
 
     <p v-if="errorMessage" class="error-text">{{ errorMessage }}</p>
 
-    <div ref="listRef" class="market-list" @scroll="handleListScroll">
+    <div ref="listRef" class="market-list">
       <div v-if="isInitialLoading" class="market-loader">
         <div class="loader">loading</div>
       </div>
@@ -86,7 +86,7 @@
       <p v-if="loading && gifts.length > 0" class="loading-more">Loading more...</p>
     </div>
 
-    <button v-if="showTop" class="to-top" type="button" @click="scrollToTop">↑</button>
+    <button v-if="showTop" class="to-top" type="button" @click="scrollToTop">^</button>
   </div>
 
   <div class="bar">
@@ -129,7 +129,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { fetchGiftPage } from '../script/giftsApi.js'
 import rarityCsv from '../assets/data/rarity_rows.csv?raw'
 
@@ -301,11 +301,10 @@ function resetFilters() {
   applyFilters()
 }
 
-function handleListScroll(event) {
-  const target = event.target
-  const maxScroll = target.scrollHeight - target.clientHeight
-  const progress = maxScroll > 0 ? target.scrollTop / maxScroll : 0
-  showTop.value = target.scrollTop > 240
+function handleWindowScroll() {
+  const maxScroll = document.documentElement.scrollHeight - window.innerHeight
+  const progress = maxScroll > 0 ? window.scrollY / maxScroll : 0
+  showTop.value = window.scrollY > 240
   if (progress >= 0.5) {
     fetchNextPage()
   }
@@ -324,5 +323,10 @@ onMounted(() => {
   collectionMeta.value = meta
   handleCollectionChange()
   applyFilters()
+  window.addEventListener('scroll', handleWindowScroll, { passive: true })
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('scroll', handleWindowScroll)
 })
 </script>
