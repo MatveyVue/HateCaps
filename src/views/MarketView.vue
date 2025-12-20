@@ -39,8 +39,8 @@
         <input
           v-model="numberInput"
           class="filter-input"
-          type="number"
-          min="1"
+          type="text"
+          inputmode="numeric"
           placeholder="Number"
         />
       </div>
@@ -83,7 +83,6 @@
           </a>
         </div>
       </div>
-      <div ref="sentinelRef" class="market-sentinel"></div>
       <p v-if="loading && gifts.length > 0" class="loading-more">Loading more...</p>
     </div>
 
@@ -130,7 +129,7 @@
 </template>
 
 <script setup>
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { fetchGiftPage } from '../script/giftsApi.js'
 import rarityCsv from '../assets/data/rarity_rows.csv?raw'
 
@@ -151,13 +150,11 @@ const loading = ref(false)
 const allLoaded = ref(false)
 const errorMessage = ref('')
 const listRef = ref(null)
-const sentinelRef = ref(null)
 const showTop = ref(false)
 
 const rarityIndex = ref(new Map())
 const collectionMeta = ref(new Map())
 const pageCache = new Map()
-let observer = null
 
 const isInitialLoading = computed(() => loading.value && gifts.value.length === 0)
 
@@ -306,7 +303,12 @@ function resetFilters() {
 
 function handleListScroll(event) {
   const target = event.target
+  const maxScroll = target.scrollHeight - target.clientHeight
+  const progress = maxScroll > 0 ? target.scrollTop / maxScroll : 0
   showTop.value = target.scrollTop > 240
+  if (progress >= 0.5) {
+    fetchNextPage()
+  }
 }
 
 function scrollToTop() {
@@ -322,24 +324,5 @@ onMounted(() => {
   collectionMeta.value = meta
   handleCollectionChange()
   applyFilters()
-
-  observer = new IntersectionObserver(
-    (entries) => {
-      if (entries[0].isIntersecting) {
-        fetchNextPage()
-      }
-    },
-    { root: listRef.value, rootMargin: '200px' }
-  )
-
-  if (sentinelRef.value) {
-    observer.observe(sentinelRef.value)
-  }
-})
-
-onBeforeUnmount(() => {
-  if (observer) {
-    observer.disconnect()
-  }
 })
 </script>
