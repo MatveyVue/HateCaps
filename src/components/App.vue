@@ -1,10 +1,6 @@
 <template>
 <div v-if="showAppLoader" class="app-loader">
   <img class="app-loader-logo" src="./cap.png" alt="Cap logo">
-  <div class="app-loader-spinner">
-    <div class="loader">loading</div>
-  </div>
-  <p class="app-loader-text">Loading</p>
   <div class="app-loader-bar">
     <div class="app-loader-fill"></div>
   </div>

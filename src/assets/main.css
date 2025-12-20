@@ -611,8 +611,8 @@ a {
 .loader:after {
   overflow:hidden;
   border-radius: 50%;
-  width: 6em;
-  height: 6em;
+  width: 4.5em;
+  height: 4.5em;
 }
 
 .loader {
@@ -644,9 +644,9 @@ a {
 }
 
 .app-loader-logo {
-  width: 90px;
-  height: 90px;
-  border-radius: 24px;
+  width: 140px;
+  height: 140px;
+  border-radius: 32px;
   object-fit: cover;
 }
 
@@ -656,15 +656,8 @@ a {
   justify-content: center;
 }
 
-.app-loader-text {
-  margin: 0;
-  color: #d6d6d6;
-  font-size: 14px;
-  letter-spacing: 0.08em;
-}
-
 .app-loader-bar {
-  width: 220px;
+  width: 240px;
   height: 6px;
   background-color: #1f1f1f;
   border-radius: 999px;
