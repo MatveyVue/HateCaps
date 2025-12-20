@@ -311,9 +311,7 @@ function handleWindowScroll() {
 }
 
 function scrollToTop() {
-  if (listRef.value) {
-    listRef.value.scrollTo({ top: 0, behavior: 'smooth' })
-  }
+  window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
 onMounted(() => {
