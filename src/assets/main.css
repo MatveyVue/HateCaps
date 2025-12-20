@@ -15,6 +15,20 @@ body::-webkit-scrollbar {
   display: none;
 }
 
+html,
+body,
+#app {
+  height: 100%;
+}
+
+* {
+  scrollbar-width: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
+}
+
 .top1 {
   background-color: rgb(199, 199, 50);
   width: 20px;
@@ -259,6 +273,146 @@ a {
   font-size: 14px;
 }
 
+.market-page {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px 12px 90px;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.market-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.market-title {
+  margin: 0;
+  font-size: 22px;
+}
+
+.filter-toggle {
+  border: none;
+  border-radius: 14px;
+  padding: 8px 14px;
+  background-color: #1d1d1d;
+  color: white;
+  font-family: Geologica;
+}
+
+.filters-panel {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+  padding: 12px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #202020, #111111);
+  border: 1px solid #2c2c2c;
+}
+
+.filter-select {
+  border-radius: 12px;
+  border: 1px solid #2d2d2d;
+  padding: 8px 10px;
+  background-color: #1f1f1f;
+  color: white;
+  font-family: Geologica;
+}
+
+.filter-actions {
+  display: flex;
+  gap: 10px;
+  grid-column: 1 / -1;
+}
+
+.filter-btn.ghost {
+  background-color: #1f1f1f;
+  color: white;
+  border: 1px solid #2c2c2c;
+}
+
+.collection-preview {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 18px;
+  background-color: #1b1b1b;
+}
+
+.collection-image {
+  width: 68px;
+  height: 68px;
+  border-radius: 16px;
+  object-fit: cover;
+  background-color: #111111;
+}
+
+.collection-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.collection-name {
+  margin: 0;
+  font-size: 16px;
+}
+
+.collection-meta {
+  margin: 0;
+  color: #9b9b9b;
+  font-size: 13px;
+}
+
+.market-list {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.page-btn {
+  border: none;
+  border-radius: 14px;
+  padding: 8px 16px;
+  background-color: #f0f0f0;
+  color: #111;
+  font-family: Geologica;
+}
+
+.page-btn:disabled {
+  opacity: 0.4;
+}
+
+.page-label {
+  font-size: 14px;
+  color: #cfcfcf;
+}
+
+.to-top {
+  position: fixed;
+  right: 18px;
+  bottom: 110px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background-color: #f0f0f0;
+  color: #111;
+  font-size: 20px;
+}
+
 .title {
   font-size: 16px;
   margin-top: 5px;
@@ -325,6 +479,8 @@ a {
   width: 40vw;
   margin-top: 5vw;
   max-width: 250px;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 .tc {
