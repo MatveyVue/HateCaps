@@ -12,47 +12,30 @@
 
     <div v-if="filtersOpen" class="filters-panel">
       <div class="filter-grid">
-        <input
-          v-model="selectedCollection"
-          class="filter-input"
-          list="collection-options"
-          placeholder="Collection"
-          @change="handleCollectionChange"
-        />
-        <datalist id="collection-options">
-          <option value="All"></option>
-          <option v-for="collection in collectionOptions" :key="collection" :value="collection"></option>
-        </datalist>
-        <input
-          v-model="selectedModel"
-          class="filter-input"
-          list="model-options"
-          placeholder="Model"
-        />
-        <datalist id="model-options">
-          <option value="All"></option>
-          <option v-for="model in modelOptions" :key="model" :value="model"></option>
-        </datalist>
-        <input
-          v-model="selectedBackdrop"
-          class="filter-input"
-          list="backdrop-options"
-          placeholder="Backdrop"
-        />
-        <datalist id="backdrop-options">
-          <option value="All"></option>
-          <option v-for="backdrop in backdropOptions" :key="backdrop" :value="backdrop"></option>
-        </datalist>
-        <input
-          v-model="selectedSymbol"
-          class="filter-input"
-          list="symbol-options"
-          placeholder="Symbol"
-        />
-        <datalist id="symbol-options">
-          <option value="All"></option>
-          <option v-for="symbol in symbolOptions" :key="symbol" :value="symbol"></option>
-        </datalist>
+        <select v-model="selectedCollection" class="filter-select" @change="handleCollectionChange">
+          <option value="All">All Collections</option>
+          <option v-for="collection in collectionOptions" :key="collection" :value="collection">
+            {{ collection }}
+          </option>
+        </select>
+        <select v-model="selectedModel" class="filter-select">
+          <option value="All">All Models</option>
+          <option v-for="model in modelOptions" :key="model" :value="model">
+            {{ model }}
+          </option>
+        </select>
+        <select v-model="selectedBackdrop" class="filter-select">
+          <option value="All">All Backdrops</option>
+          <option v-for="backdrop in backdropOptions" :key="backdrop" :value="backdrop">
+            {{ backdrop }}
+          </option>
+        </select>
+        <select v-model="selectedSymbol" class="filter-select">
+          <option value="All">All Symbols</option>
+          <option v-for="symbol in symbolOptions" :key="symbol" :value="symbol">
+            {{ symbol }}
+          </option>
+        </select>
         <input
           v-model="numberInput"
           class="filter-input"
