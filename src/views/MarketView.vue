@@ -86,7 +86,7 @@
       <p v-if="loading && gifts.length > 0" class="loading-more">Loading more...</p>
     </div>
 
-    <button v-if="showTop" class="to-top" type="button" @click="scrollToTop">^</button>
+    <button v-if="showTop" class="to-top" type="button" @click="scrollToTop">↑</button>
   </div>
 
   <div class="bar">
