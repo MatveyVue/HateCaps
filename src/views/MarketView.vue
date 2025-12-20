@@ -1,44 +1,49 @@
 <template>
-  <div class="market-page">
+  <div class="market-shell">
     <div class="market-header">
-      <h1 class="market-title">Market</h1>
+      <div>
+        <p class="market-kicker">Collectibles</p>
+        <h1 class="market-title">Market</h1>
+      </div>
       <button class="filter-toggle" type="button" @click="filtersOpen = !filtersOpen">
         Filters
       </button>
     </div>
 
     <div v-if="filtersOpen" class="filters-panel">
-      <select v-model="selectedCollection" class="filter-select" @change="handleCollectionChange">
-        <option value="All">All Collections</option>
-        <option v-for="collection in collectionOptions" :key="collection" :value="collection">
-          {{ collection }}
-        </option>
-      </select>
-      <select v-model="selectedModel" class="filter-select" :disabled="selectedCollection === 'All'">
-        <option value="All">All Models</option>
-        <option v-for="model in modelOptions" :key="model" :value="model">
-          {{ model }}
-        </option>
-      </select>
-      <select v-model="selectedBackdrop" class="filter-select" :disabled="selectedCollection === 'All'">
-        <option value="All">All Backdrops</option>
-        <option v-for="backdrop in backdropOptions" :key="backdrop" :value="backdrop">
-          {{ backdrop }}
-        </option>
-      </select>
-      <select v-model="selectedSymbol" class="filter-select" :disabled="selectedCollection === 'All'">
-        <option value="All">All Symbols</option>
-        <option v-for="symbol in symbolOptions" :key="symbol" :value="symbol">
-          {{ symbol }}
-        </option>
-      </select>
-      <input
-        v-model="numberInput"
-        class="filter-input"
-        type="number"
-        min="1"
-        placeholder="Number"
-      />
+      <div class="filter-grid">
+        <select v-model="selectedCollection" class="filter-select" @change="handleCollectionChange">
+          <option value="All">All Collections</option>
+          <option v-for="collection in collectionOptions" :key="collection" :value="collection">
+            {{ collection }}
+          </option>
+        </select>
+        <select v-model="selectedModel" class="filter-select" :disabled="selectedCollection === 'All'">
+          <option value="All">All Models</option>
+          <option v-for="model in modelOptions" :key="model" :value="model">
+            {{ model }}
+          </option>
+        </select>
+        <select v-model="selectedBackdrop" class="filter-select" :disabled="selectedCollection === 'All'">
+          <option value="All">All Backdrops</option>
+          <option v-for="backdrop in backdropOptions" :key="backdrop" :value="backdrop">
+            {{ backdrop }}
+          </option>
+        </select>
+        <select v-model="selectedSymbol" class="filter-select" :disabled="selectedCollection === 'All'">
+          <option value="All">All Symbols</option>
+          <option v-for="symbol in symbolOptions" :key="symbol" :value="symbol">
+            {{ symbol }}
+          </option>
+        </select>
+        <input
+          v-model="numberInput"
+          class="filter-input"
+          type="number"
+          min="1"
+          placeholder="Number"
+        />
+      </div>
       <div class="filter-actions">
         <button class="filter-btn" type="button" @click="applyFilters" :disabled="loading">
           Apply
@@ -60,35 +65,29 @@
     <p v-if="errorMessage" class="error-text">{{ errorMessage }}</p>
 
     <div ref="listRef" class="market-list" @scroll="handleListScroll">
-      <div v-if="isInitialLoading" id="preloader">
+      <div v-if="isInitialLoading" class="market-loader">
         <div class="loader">loading</div>
       </div>
-      <p v-if="!loading && pageItems.length === 0" class="empty-text">
+      <p v-if="!loading && gifts.length === 0" class="empty-text">
         No results
       </p>
-      <div v-for="(gift, index) in pageItems" :key="index" class="gifts-container">
-        <img :src="gift.photo_url" style="width: 100%; border-radius: 20px;" />
-        <p class="title" style="color: white;">{{ gift.title }}</p>
-        <p class="number">#{{ gift.number }}</p>
-        <a :href="gift.webapp_url" target="_blank" rel="noopener" style="display: inline-block; margin-top: 8px;">
-          <button class="buy-btn">{{ gift.price }} TON</button>
-        </a>
+      <div v-for="(gift, index) in gifts" :key="index" class="market-card">
+        <div class="card-image">
+          <img :src="gift.photo_url" />
+        </div>
+        <div class="card-body">
+          <p class="card-title">{{ gift.title }}</p>
+          <p class="card-number">#{{ gift.number }}</p>
+          <a :href="gift.webapp_url" target="_blank" rel="noopener">
+            <button class="card-cta">{{ gift.price }} TON</button>
+          </a>
+        </div>
       </div>
+      <div ref="sentinelRef" class="market-sentinel"></div>
+      <p v-if="loading && gifts.length > 0" class="loading-more">Loading more...</p>
     </div>
 
-    <div class="pagination">
-      <button class="page-btn" type="button" @click="goPrev" :disabled="loading || currentPage === 0">
-        Prev
-      </button>
-      <span class="page-label">Page {{ currentPage + 1 }}</span>
-      <button class="page-btn" type="button" @click="goNext" :disabled="loading || !hasNext">
-        Next
-      </button>
-    </div>
-
-    <button v-if="showTop" class="to-top" type="button" @click="scrollToTop">
-      ^
-    </button>
+    <button v-if="showTop" class="to-top" type="button" @click="scrollToTop">↑</button>
   </div>
 
   <div class="bar">
@@ -131,7 +130,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { fetchGiftPage } from '../script/giftsApi.js'
 import rarityCsv from '../assets/data/rarity_rows.csv?raw'
 
@@ -146,19 +145,21 @@ const selectedBackdrop = ref('All')
 const selectedSymbol = ref('All')
 const numberInput = ref('')
 
-const pageItems = ref([])
+const gifts = ref([])
 const currentPage = ref(0)
-const hasNext = ref(true)
 const loading = ref(false)
+const allLoaded = ref(false)
 const errorMessage = ref('')
 const listRef = ref(null)
+const sentinelRef = ref(null)
 const showTop = ref(false)
 
 const rarityIndex = ref(new Map())
 const collectionMeta = ref(new Map())
 const pageCache = new Map()
+let observer = null
 
-const isInitialLoading = computed(() => loading.value && pageItems.value.length === 0)
+const isInitialLoading = computed(() => loading.value && gifts.value.length === 0)
 
 const previewImageUrl = computed(() => {
   if (selectedCollection.value === 'All') return ''
@@ -255,14 +256,14 @@ function buildPayload() {
   }
 }
 
-async function loadPage(page) {
-  if (loading.value || page < 0) return
+async function fetchNextPage() {
+  if (loading.value || allLoaded.value) return
 
+  const page = currentPage.value
   const cacheKey = `${page}|${selectedCollection.value}|${selectedModel.value}|${selectedSymbol.value}|${selectedBackdrop.value}|${numberInput.value}`
   if (pageCache.has(cacheKey)) {
-    pageItems.value = pageCache.get(cacheKey)
-    currentPage.value = page
-    hasNext.value = pageCache.get(`${cacheKey}:hasNext`) !== false
+    gifts.value = [...gifts.value, ...pageCache.get(cacheKey)]
+    currentPage.value += 1
     return
   }
 
@@ -271,15 +272,13 @@ async function loadPage(page) {
 
   try {
     const items = await fetchGiftPage(buildPayload(), page)
-    if (items.length === 0 && page > 0) {
-      hasNext.value = false
+    if (items.length === 0) {
+      allLoaded.value = true
       return
     }
-    pageItems.value = items
-    currentPage.value = page
-    hasNext.value = items.length > 0
+    gifts.value = [...gifts.value, ...items]
     pageCache.set(cacheKey, items)
-    pageCache.set(`${cacheKey}:hasNext`, items.length > 0)
+    currentPage.value += 1
   } catch (error) {
     errorMessage.value = error?.message || 'Failed to load gifts'
   } finally {
@@ -288,10 +287,11 @@ async function loadPage(page) {
 }
 
 function applyFilters() {
-  pageItems.value = []
+  gifts.value = []
   currentPage.value = 0
-  hasNext.value = true
-  loadPage(0)
+  allLoaded.value = false
+  pageCache.clear()
+  fetchNextPage()
 }
 
 function resetFilters() {
@@ -302,18 +302,6 @@ function resetFilters() {
   numberInput.value = ''
   handleCollectionChange()
   applyFilters()
-}
-
-function goNext() {
-  if (hasNext.value) {
-    loadPage(currentPage.value + 1)
-  }
-}
-
-function goPrev() {
-  if (currentPage.value > 0) {
-    loadPage(currentPage.value - 1)
-  }
 }
 
 function handleListScroll(event) {
@@ -334,5 +322,24 @@ onMounted(() => {
   collectionMeta.value = meta
   handleCollectionChange()
   applyFilters()
+
+  observer = new IntersectionObserver(
+    (entries) => {
+      if (entries[0].isIntersecting) {
+        fetchNextPage()
+      }
+    },
+    { root: listRef.value, rootMargin: '200px' }
+  )
+
+  if (sentinelRef.value) {
+    observer.observe(sentinelRef.value)
+  }
+})
+
+onBeforeUnmount(() => {
+  if (observer) {
+    observer.disconnect()
+  }
 })
 </script>

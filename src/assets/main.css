@@ -282,41 +282,70 @@ a {
   box-sizing: border-box;
 }
 
+.market-shell {
+  min-height: 100%;
+  padding: 16px 16px 100px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: radial-gradient(circle at top, rgba(252, 221, 106, 0.12), transparent 55%),
+    radial-gradient(circle at 20% 30%, rgba(52, 214, 162, 0.12), transparent 40%),
+    radial-gradient(circle at 80% 10%, rgba(255, 120, 72, 0.2), transparent 40%),
+    #0f0f0f;
+}
+
 .market-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.market-title {
+.market-kicker {
   margin: 0;
-  font-size: 22px;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.4em;
+  color: #a6a6a6;
+}
+
+.market-title {
+  margin: 4px 0 0;
+  font-size: 30px;
+  font-weight: 600;
 }
 
 .filter-toggle {
   border: none;
   border-radius: 14px;
-  padding: 8px 14px;
-  background-color: #1d1d1d;
-  color: white;
+  padding: 10px 16px;
+  background: linear-gradient(135deg, #f8d26f, #ff6b4a);
+  color: #101010;
   font-family: Geologica;
+  font-weight: 600;
 }
 
 .filters-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(20, 20, 20, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.4);
+}
+
+.filter-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 10px;
-  padding: 12px;
-  border-radius: 18px;
-  background: linear-gradient(135deg, #202020, #111111);
-  border: 1px solid #2c2c2c;
 }
 
 .filter-select {
   border-radius: 12px;
   border: 1px solid #2d2d2d;
-  padding: 8px 10px;
-  background-color: #1f1f1f;
+  padding: 10px 12px;
+  background-color: #141414;
   color: white;
   font-family: Geologica;
 }
@@ -324,28 +353,39 @@ a {
 .filter-actions {
   display: flex;
   gap: 10px;
-  grid-column: 1 / -1;
+}
+
+.filter-btn {
+  flex: 1 1 auto;
+  border: none;
+  border-radius: 14px;
+  padding: 10px 12px;
+  background-color: #f8d26f;
+  color: #111;
+  font-family: Geologica;
+  font-weight: 600;
 }
 
 .filter-btn.ghost {
-  background-color: #1f1f1f;
-  color: white;
-  border: 1px solid #2c2c2c;
+  background-color: transparent;
+  color: #f8d26f;
+  border: 1px solid #f8d26f;
 }
 
 .collection-preview {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px;
-  border-radius: 18px;
-  background-color: #1b1b1b;
+  gap: 14px;
+  padding: 14px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(32, 32, 32, 0.9), rgba(12, 12, 12, 0.9));
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .collection-image {
-  width: 68px;
-  height: 68px;
-  border-radius: 16px;
+  width: 72px;
+  height: 72px;
+  border-radius: 18px;
   object-fit: cover;
   background-color: #111111;
 }
@@ -361,7 +401,7 @@ a {
 }
 
 .collection-meta {
-  margin: 0;
+  margin: 6px 0 0;
   color: #9b9b9b;
   font-size: 13px;
 }
@@ -370,34 +410,77 @@ a {
   flex: 1 1 auto;
   overflow-y: auto;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  padding-bottom: 10px;
 }
 
-.pagination {
+.market-card {
+  background: linear-gradient(180deg, rgba(28, 28, 28, 0.95), rgba(14, 14, 14, 0.95));
+  border-radius: 20px;
+  padding: 10px;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  margin-bottom: 6px;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.45);
 }
 
-.page-btn {
+.card-image {
+  border-radius: 16px;
+  overflow: hidden;
+  background-color: #0c0c0c;
+}
+
+.card-image img {
+  width: 100%;
+  display: block;
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.card-title {
+  margin: 0;
+  font-size: 15px;
+}
+
+.card-number {
+  margin: 0;
+  color: #8b8b8b;
+  font-size: 13px;
+}
+
+.card-cta {
+  width: 100%;
   border: none;
   border-radius: 14px;
-  padding: 8px 16px;
-  background-color: #f0f0f0;
-  color: #111;
+  padding: 8px 0;
+  background: linear-gradient(135deg, #34d6a2, #2b8cff);
+  color: #0e0e0e;
   font-family: Geologica;
+  font-weight: 600;
 }
 
-.page-btn:disabled {
-  opacity: 0.4;
+.market-loader {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 120px;
 }
 
-.page-label {
-  font-size: 14px;
-  color: #cfcfcf;
+.market-sentinel {
+  height: 1px;
+}
+
+.loading-more {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: #8b8b8b;
+  margin: 0 0 10px;
 }
 
 .to-top {
@@ -408,7 +491,7 @@ a {
   height: 44px;
   border-radius: 50%;
   border: none;
-  background-color: #f0f0f0;
+  background: linear-gradient(135deg, #f8d26f, #ff6b4a);
   color: #111;
   font-size: 20px;
 }
