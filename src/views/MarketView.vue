@@ -1,5 +1,5 @@
 <template>
-<div id="preloader">
+<div v-if="isLoading" id="preloader">
   <div style="" class="loader">loading</div>
 </div>
 
@@ -16,7 +16,7 @@
 
 <div class="bar">
 <div class="btn-container">
-<RouterLink to="market">
+<RouterLink to="/market">
     <button class="market">
         <img style="position: absolute; margin-left: -17px; margin-top: 5px;" src="https://github.com/MatveyVue/icopn/blob/main/MarketActive.png?raw=true" width="33px"></img>
         <p style="margin-top: 40px; color: rgb(25, 122, 207);">Market</p>
@@ -28,7 +28,7 @@
         <p style="margin-top: 40px; color: white;">Top</p>
     </button>
 </RouterLink>
-<RouterLink to="profile">
+<RouterLink to="/profile">
     <button class="profile">
         <img style="position: absolute; margin-left: -18px;" src="https://github.com/MatveyVue/icopn/blob/main/Profile.png?raw=true" width="35px"></img>
         <p style="margin-top: 40px;">Profile</p>
@@ -43,12 +43,17 @@
 
 
 <script setup>
+import { onMounted, ref } from 'vue';
 import { gifts } from '../script/gifts.js'; 
+
+const isLoading = ref(true);
+
+onMounted(() => {
+    isLoading.value = false;
+});
 window.addEventListener('load', function() {
-    // Убираем стандартное поведение при загрузке, т.к. будем использовать setTimeout
 });
 
-// Устанавливаем таймер на 10 секунд (10000 миллисекунд)
 setTimeout(function() {
     const preloader = document.getElementById('preloader');
     if (preloader) { // Проверяем, существует ли элемент

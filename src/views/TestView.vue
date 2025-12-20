@@ -53,7 +53,7 @@ export default {
         method: 'POST',
         headers: {
           'accept': 'application/json',
-          'x-api-key': 'matveykaSha',
+          'x-api-key': import.meta.env.VITE_SWIFTGIFTS_API_KEY,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
@@ -73,10 +73,8 @@ export default {
 
 <script setup>
 window.addEventListener('load', function() {
-    // Убираем стандартное поведение при загрузке, т.к. будем использовать setTimeout
 });
 
-// Устанавливаем таймер на 10 секунд (10000 миллисекунд)
 setTimeout(function() {
     const preloader = document.getElementById('preloader');
     if (preloader) { // Проверяем, существует ли элемент

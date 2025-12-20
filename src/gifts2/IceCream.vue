@@ -52,10 +52,8 @@ export default {
     };
   },
   async mounted() {
-    // Загружаем первую страницу
     await this.fetchGifts();
 
-    // Добавляем обработчик прокрутки
     window.addEventListener('scroll', this.handleScroll);
   },
   beforeDestroy() {
@@ -72,7 +70,7 @@ export default {
         method: 'POST',
         headers: {
           'accept': 'application/json',
-          'x-api-key': 'matveykaSha',
+          'x-api-key': import.meta.env.VITE_SWIFTGIFTS_API_KEY,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
@@ -86,7 +84,6 @@ export default {
       
       const data = await response.json();
 
-      // Проверка — есть ли новые данные
       const newGifts = Array.isArray(data) ? data : data.items || [];
       if (newGifts.length > 0) {
         this.gifts = [...this.gifts, ...newGifts]; // добавляем новые гифты
@@ -98,7 +95,6 @@ export default {
       this.loading = false;
     },
     handleScroll() {
-      // Проверка, что пользователь прокрутил почти до низа
       if (
         window.innerHeight + window.scrollY >= document.body.offsetHeight - 100 &&
         !this.loading &&
@@ -113,10 +109,8 @@ export default {
 
 <script setup>
 window.addEventListener('load', function() {
-    // Убираем стандартное поведение при загрузке, т.к. будем использовать setTimeout
 });
 
-// Устанавливаем таймер на 10 секунд (10000 миллисекунд)
 setTimeout(function() {
     const preloader = document.getElementById('preloader');
     if (preloader) { // Проверяем, существует ли элемент
@@ -124,3 +118,4 @@ setTimeout(function() {
     }
 }, 5000); // 10000 миллисекунд = 10 секунд
 </script>
+

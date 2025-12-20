@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import GiftCollectionView from '../views/GiftCollectionView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -22,87 +23,104 @@ const router = createRouter({
     {
       path: '/jollychimp',
       name: 'jollychimp',
-      component: () => import('../gifts/JollyChimp.vue'),
+      component: GiftCollectionView,
+      props: { giftName: 'Jolly Chimp' },
     },
     {
       path: '/plushpepe',
       name: 'plushpepe',
-      component: () => import('../gifts/PlushPepe.vue'),
+      component: GiftCollectionView,
+      props: { giftName: 'Plush Pepe' },
     },
     {
       path: '/durovcap',
       name: 'durovcap',
-      component: () => import('../gifts/DurovCap.vue'),
+      component: GiftCollectionView,
+      props: { giftName: "Durov's Cap" },
     },
     {
       path: '/astralshard',
       name: 'astralshard',
-      component: () => import('../gifts/AstralShard.vue'),
+      component: GiftCollectionView,
+      props: { giftName: 'Astral Shard' },
     },
     {
       path: '/lootbag',
       name: 'lootbag',
-      component: () => import('../gifts/LootBag.vue'),
+      component: GiftCollectionView,
+      props: { giftName: 'Loot Bag' },
     },
     {
       path: '/preciouspeach',
       name: 'preciouspeach',
-      component: () => import('../gifts/PreciousPeach.vue'),
+      component: GiftCollectionView,
+      props: { giftName: 'Precious Peach' },
     },
     {
       path: '/swisswatch',
       name: 'swisswatch',
-      component: () => import('../gifts/SwissWatch.vue'),
+      component: GiftCollectionView,
+      props: { giftName: 'Swiss Watch' },
     },
     {
       path: '/vintagecigar',
       name: 'vintagecigar',
-      component: () => import('../gifts/VintageCigar.vue'),
+      component: GiftCollectionView,
+      props: { giftName: 'Vintage Cigar' },
     },
     {
       path: '/iongem',
       name: 'iongem',
-      component: () => import('../gifts/IonGem.vue'),
+      component: GiftCollectionView,
+      props: { giftName: 'Ion Gem' },
     },
     {
       path: '/signetring',
       name: 'signetring',
-      component: () => import('../gifts/SignetRing.vue'),
+      component: GiftCollectionView,
+      props: { giftName: 'Signet Ring' },
     },
     {
       path: '/diamondring',
       name: 'diamondring',
-      component: () => import('../gifts/DiamondRing.vue'),
+      component: GiftCollectionView,
+      props: { giftName: 'Diamond Ring' },
     },
     {
       path: '/deskcalendar',
       name: 'deskcalendar',
-      component: () => import('../gifts/DeskCalendar.vue'),
+      component: GiftCollectionView,
+      props: { giftName: 'Desk Calendar' },
     },
     {
       path: '/b-daycandle',
       name: 'b-daycandle',
-      component: () => import('../gifts/B-DayCandle.vue'),
+      component: GiftCollectionView,
+      props: { giftName: 'B-Day Candle' },
     },
     {
       path: '/gingercookie',
       name: 'gingercookie',
-      component: () => import('../gifts/GingerCookie.vue'),
+      component: GiftCollectionView,
+      props: { giftName: 'Ginger Cookie' },
     },
     {
       path: '/freshsocks',
       name: 'freshsocks',
-      component: () => import('../gifts/FreshSocks.vue'),
+      component: GiftCollectionView,
+      props: { giftName: 'Fresh Socks' },
     },
     {
       path: '/icecream',
       name: 'icecream',
-      component: () => import('../gifts2/IceCream.vue'),
+      component: GiftCollectionView,
+      props: { giftName: 'Ice Cream' },
     },
     {
       path: '/inputkey',
       name: 'inputkey',
-      component: () => import('../gifts2/InputKey.vue'),
+      component: GiftCollectionView,
+      props: { giftName: 'Input Key' },
     },
   ],
 })

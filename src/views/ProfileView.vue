@@ -1,9 +1,9 @@
 <template>
-<div id="preloader">
+<div v-if="isLoading" id="preloader">
   <div style="" class="loader">loading</div>
 </div>
 <center>
-    <img class="profile-img" src="https://github.com/MatveyVue/gift/blob/main/Anonim.png?raw=true">
+    <img class="profile-img" :src="photoUrl">
     <h2 style="color: white; margin-top: -10px;">{{ user }}</h2>
 </center>
 
@@ -18,7 +18,7 @@
 
 <div class="bar">
 <div class="btn-container">
-<RouterLink to="market">
+<RouterLink to="/market">
     <button class="market">
         <img style="position: absolute; margin-left: -17px; margin-top: 5px;" src="https://github.com/MatveyVue/icopn/blob/main/Market.png?raw=true" width="33px"></img>
         <p style="margin-top: 40px; color: white;">Market</p>
@@ -43,11 +43,11 @@ import { ref, onMounted } from 'vue'
 import { initializeApp } from 'firebase/app'
 import { getFirestore, doc, getDoc } from 'firebase/firestore'
 
+const isLoading = ref(false)
+
 window.addEventListener('load', function() {
-    // Убираем стандартное поведение при загрузке, т.к. будем использовать setTimeout
 });
 
-// Устанавливаем таймер на 10 секунд (10000 миллисекунд)
 setTimeout(function() {
     const preloader = document.getElementById('preloader');
     if (preloader) { // Проверяем, существует ли элемент
@@ -56,26 +56,28 @@ setTimeout(function() {
 }, 3000); // 10000 миллисекунд = 10 секунд
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAC5LEXiZ-_LcPg3pUlb9tuDzQvUptHF7s",
-  authDomain: "giftcaps.firebaseapp.com",
-  databaseURL: "https://giftcaps-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "giftcaps",
-  storageBucket: "giftcaps.appspot.com",
-  messagingSenderId: "762854065131",
-  appId: "1:762854065131:web:116cf5343de1d1e353cfae",
-  measurementId: "G-LK9N0SKT0P"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 }
 
 const app = initializeApp(firebaseConfig)
 const db = getFirestore(app)
 
 const user = ref(null)
+const photoUrl = ref('https://github.com/MatveyVue/gift/blob/main/Anonim.png?raw=true')
 const stars = ref(0)
 
 onMounted(() => {
   const userData = window.Telegram?.WebApp?.initDataUnsafe?.user
   if (userData && userData.username) {
     user.value = userData.username
+    photoUrl.value = userData.photo_url || photoUrl.value
     loadStars()
   } else {
     console.log('Пользователь еще не определен или данных нет')

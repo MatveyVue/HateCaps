@@ -11,6 +11,10 @@ body {
   overflow-y: scroll;
 }
 
+body::-webkit-scrollbar {
+  display: none;
+}
+
 .top1 {
   background-color: rgb(199, 199, 50);
   width: 20px;
@@ -197,6 +201,62 @@ a {
   grid-template-columns: repeat(2, 1fr); 
   gap: 4vw; 
   overflow-y: auto;
+}
+
+.collection-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 12px 10px 6px;
+}
+
+.collection-title {
+  font-size: 20px;
+  margin: 0;
+}
+
+.back-btn {
+  border: none;
+  border-radius: 12px;
+  padding: 6px 12px;
+  background-color: #2b2b2b;
+  color: white;
+  font-family: Geologica;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 8px 10px 12px;
+}
+
+.filter-input {
+  flex: 1 1 120px;
+  min-width: 120px;
+  border-radius: 12px;
+  border: 1px solid #2d2d2d;
+  padding: 8px 10px;
+  background-color: #1f1f1f;
+  color: white;
+  font-family: Geologica;
+}
+
+.filter-btn {
+  border: none;
+  border-radius: 12px;
+  padding: 8px 12px;
+  background-color: #f0f0f0;
+  color: #111;
+  font-family: Geologica;
+}
+
+.error-text,
+.empty-text {
+  margin: 0 12px 10px;
+  color: #cfcfcf;
+  font-size: 14px;
 }
 
 .title {

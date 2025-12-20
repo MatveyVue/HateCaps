@@ -1,5 +1,5 @@
 <template>
-<div id="preloader">
+<div v-if="isLoading" id="preloader">
   <div style="" class="loader">loading</div>
 </div>
 
@@ -54,7 +54,7 @@
 
 <div class="bar">
 <div class="btn-container">
-<RouterLink to="market">
+<RouterLink to="/market">
     <button class="market">
         <img style="position: absolute; margin-left: -17px; margin-top: 5px;" src="https://github.com/MatveyVue/icopn/blob/main/Market.png?raw=true" width="33px"></img>
         <p style="margin-top: 40px;">Market</p>
@@ -64,7 +64,7 @@
         <img style="position: absolute; margin-left: -18px;" src="https://github.com/MatveyVue/icopn/blob/main/LeaderActive.png?raw=true" width="40px"></img>
         <p style="margin-top: 40px;">Top</p>
     </button>
-<RouterLink to="profile">
+<RouterLink to="/profile">
     <button class="profile">
         <img style="position: absolute; margin-left: -18px;" src="https://github.com/MatveyVue/icopn/blob/main/Profile.png?raw=true" width="35px"></img>
         <p style="margin-top: 40px;">Profile</p>
@@ -75,14 +75,19 @@
 </template>
   
 <script setup>
+import { onMounted, ref } from 'vue';
 import { caps, profile, open, top1, top2, top3 } from '../script/home.js'; 
 console.log(profile.value); 
 
-window.addEventListener('load', function() {
-    // Убираем стандартное поведение при загрузке, т.к. будем использовать setTimeout
+const isLoading = ref(true);
+
+onMounted(() => {
+    isLoading.value = false;
 });
 
-// Устанавливаем таймер на 10 секунд (10000 миллисекунд)
+window.addEventListener('load', function() {
+});
+
 setTimeout(function() {
     const preloader = document.getElementById('preloader');
     if (preloader) { // Проверяем, существует ли элемент
