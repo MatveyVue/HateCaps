@@ -133,6 +133,8 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { fetchGiftPage } from '../script/giftsApi.js'
 import rarityCsv from '../assets/data/rarity_rows.csv?raw'
 
+defineOptions({ name: 'market' })
+
 const filtersOpen = ref(false)
 const collectionOptions = ref([])
 const modelOptions = ref([])
