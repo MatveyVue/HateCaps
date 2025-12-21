@@ -34,7 +34,7 @@
 
 <p style="color: rgb(20, 20, 20); font-size: 10px;">.</p>
 <div class="banner">
-    <a href="https://t.me/+NHDUND_r4DlmMzk0">
+    <a href="https://t.me/+x4-ZMCjs8y0zNDQ0">
         <img class="banner" src="https://github.com/MatveyVue/icopn/blob/main/Banner.jpg?raw=true"></img>
     </a>
 </div>
