@@ -56,6 +56,13 @@ export const profile = ref([
     items: "1 Caps",
     info: "10",
   },
+  {
+    icon: "https://github.com/MatveyVue/Profiles-Telegram/blob/main/IMG_8693.jpg?raw=true",
+    nick: "Salomol",
+    link: "https://t.me/lyublyu_yanu",
+    items: "1 Caps",
+    info: "11",
+  },
 ]);
 
 export const top1 = ref([
