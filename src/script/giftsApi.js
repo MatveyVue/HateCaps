@@ -1,5 +1,3 @@
-import axios from 'axios'
-
 const API_URL =
   import.meta.env.VITE_SWIFTGIFTS_API_URL ||
   'https://api-swiftgifts.vercel.app/api/aggregator'
@@ -52,7 +50,7 @@ export async function fetchGiftPage(payload, page) {
     return cached
   }
 
-  const response = await axios.post(`${API_URL}?page=${page}`, {
+  const response = await fetch(`${API_URL}?page=${page}`, {
     method: 'POST',
     headers: {
       accept: 'application/json',
