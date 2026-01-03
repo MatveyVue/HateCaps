@@ -31,7 +31,7 @@
         <a :href="topPlayers[0].link || '#'">
           <b><p style="margin-top: -3px; font-size: 18px; margin-left: -5px;">{{ topPlayers[0].user ? topPlayers[0].user : 'Нет данных' }}<img style="margin-top: 2px; position: absolute;" :src="topPlayers[0].cap" width="20px"></img></p></b><br>
         </a>
-          <p style="margin-top: -38px; margin-left: -16px;">{{ topPlayers[0].stars }}<img style="position: absolute; margin-top: 1px;"  src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/Stars.png?raw=true" width="20px"></p>
+          <p style="margin-top: -38px; margin-left: -14px;">{{ topPlayers[0].stars }}<img style="position: absolute; margin-top: 1px;"  src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/Stars.png?raw=true" width="20px"></p>
       </div>
     </center>
       <div v-if="topPlayers.length > 2" class="stars-top3 player-container">
@@ -40,7 +40,7 @@
           <a :href="topPlayers[2].link || '#'"> 
           <b><p style="margin-top: -3px; margin-left: 5px; font-size: 18px;">{{ topPlayers[2].user ? topPlayers[2].user : 'Нет данных' }}<img style="margin-top: 2px; position: absolute;" :src="topPlayers[2].cap" width="20px"></p></b><br>
         </a>
-          <p style="margin-top: -38px; margin-left: -16px;">{{ topPlayers[2].stars }}<img style="position: absolute;"  src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/Stars.png?raw=true" width="20px"></p>
+          <p style="margin-top: -38px; margin-left: -14px;">{{ topPlayers[2].stars }}<img style="position: absolute;"  src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/Stars.png?raw=true" width="20px"></p>
        </div>
     </div>
 </div>
