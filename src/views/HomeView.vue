@@ -20,7 +20,7 @@
           <img :src="topPlayers[1].photo" alt="Фото" style="width: 75px; height: 75px; margin-top: 40px;" class="user-photo">
           <div class="top-2">2</div>
         <a :href="topPlayers[1].link || '#'">
-          <b><p style="margin-top: -3px; margin-left: 4px; font-size: 18px;">{{ topPlayers[1].user ? topPlayers[1].user : 'Нет данных' }}<img style="margin-top: 2px; position: absolute;" :src="topPlayers[1].cap" width="20px"></p></b><br>
+          <b><p style="margin-top: -3px; margin-left: 2px; font-size: 18px;">{{ topPlayers[1].user ? topPlayers[1].user : 'Нет данных' }}<img style="margin-top: 2px; position: absolute;" :src="topPlayers[1].cap" width="20px"></p></b><br>
         </a>
           <p style="margin-top: -38px; margin-left: -16px;">{{ topPlayers[1].stars }}<img style="position: absolute;"  src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/Stars.png?raw=true" width="20px"></p>
       </div>
@@ -29,7 +29,7 @@
           <img :src="topPlayers[0].photo" alt="Фото" style="width: 100px; height: 100px; margin-top: 5px;" class="user-photo">
           <div class="top1">1</div>
         <a :href="topPlayers[0].link || '#'">
-          <b><p style="margin-top: -3px; font-size: 18px;">{{ topPlayers[0].user ? topPlayers[0].user : 'Нет данных' }}<img style="margin-top: 2px; position: absolute;" :src="topPlayers[0].cap" width="20px"></img></p></b><br>
+          <b><p style="margin-top: -3px; font-size: 18px; margin-left: -5px;">{{ topPlayers[0].user ? topPlayers[0].user : 'Нет данных' }}<img style="margin-top: 2px; position: absolute;" :src="topPlayers[0].cap" width="20px"></img></p></b><br>
         </a>
           <p style="margin-top: -38px; margin-left: -16px;">{{ topPlayers[0].stars }}<img style="position: absolute; margin-top: 1px;"  src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/Stars.png?raw=true" width="20px"></p>
       </div>
