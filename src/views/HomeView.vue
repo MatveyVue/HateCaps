@@ -27,7 +27,7 @@
     <center>
       <div v-if="topPlayers.length > 0" class="stars-top1 player-container">
           <img :src="topPlayers[0].photo" alt="Фото" style="width: 110px; height: 110px; margin-top: 5px;" class="user-photo">
-          <div style="margin-left: -10px; margin-top: 104px;" class="top1">1</div>
+          <div style="margin-left: -5px; margin-top: 104px;" class="top1">1</div>
         <a :href="topPlayers[0].link || '#'">
           <b><p style="margin-top: -3px; margin-left: -5px; font-size: 18px;">{{ topPlayers[0].user ? topPlayers[0].user : 'Нет данных' }}<img style="margin-top: 2px; position: absolute;" :src="topPlayers[0].cap" width="20px"></img></p></b><br>
         </a>
