@@ -15,12 +15,12 @@
 </center>
 
 <div>
-<div style="display: flex; justify-content: center; gap: 3vw; margin-top: 5px;" v-if="topHolders.length">
+<div style="display: flex; justify-content: center; gap: 7vw; margin-top: 10px;" v-if="topHolders.length">
 
 <div v-if="topHolders.length > 1" :style="{ 'text-align': 'center', 'margin-top': '30px' }">
-    <img src="https://github.com/MatveyVue/gift/blob/main/Anonim.png?raw=true" width="110px" alt="Holder Image">
-    <div style="margin-left: 12vw; margin-top: -37px;" class="top-2">2</div>
-<div style="margin-top: -10px;">
+    <img style="border-radius: 50%;" src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/Webby.jpg?raw=true" width="90px" alt="Holder Image">
+    <div style="margin-left: 9vw; margin-top: -25px;" class="top-2">2</div>
+<div style="margin-top: 3px;">
     <a :href="'https://tonviewer.com/address/' + topHolders[1].owner.address" target="_blank" rel="noopener noreferrer">
       <b>{{ shortenAddress(topHolders[1].owner.address) }}</b>
     </a>
@@ -31,9 +31,9 @@
 
   <!-- Центральный держатель (самый большой) -->
 <div :style="{ 'text-align': 'center' }">
-    <img src="https://github.com/MatveyVue/gift/blob/main/Anonim.png?raw=true" width="130px" alt="Holder Image">
-    <div style="margin-top: -30px;" class="top1">1</div>
-<div style="margin-top: -10px;">
+    <img style="border-radius: 50%;" src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/Scrooge.jpg?raw=true" width="110px" alt="Holder Image">
+    <div style="margin-top: -17px;" class="top1">1</div>
+<div style="margin-top: 5px;">
     <a :href="'https://tonviewer.com/address/' + topHolders[0].owner.address" target="_blank" rel="noopener noreferrer">
       <b>{{ shortenAddress(topHolders[0].owner.address) }}</b>
     </a>
@@ -44,9 +44,9 @@
 
 
 <div v-if="topHolders.length > 2" :style="{ 'text-align': 'center', 'margin-top': '30px' }">
-    <img src="https://github.com/MatveyVue/gift/blob/main/Anonim.png?raw=true" width="110px" alt="Holder Image">
-    <div style="margin-left: 12vw; margin-top: -37px;" class="top-3">3</div>
-<div style="margin-top: -10px;">
+    <img style="border-radius: 50%;" src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/StonFi.png?raw=true" width="90px" alt="Holder Image">
+    <div style="margin-left: 9vw; margin-top: -25px;" class="top-3">3</div>
+<div style="margin-top: 3px;">
     <a :href="'https://tonviewer.com/address/' + topHolders[2].owner.address" target="_blank" rel="noopener noreferrer">
       <b>{{ shortenAddress(topHolders[2].owner.address) }}</b>
     </a>
@@ -63,6 +63,18 @@
     </a>
 </div>
 <p style="color: rgb(20, 20, 20); font-size: 5px;">.</p>
+
+<div>
+    <div class="border-wallet" v-if="topHolders.length > 3" style="display: flex; align-items: center; gap: 10px;">
+      <img src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/Rstm%20Crew.jpg?raw=true" width="40px" alt="Holder Avatar" style="border-radius: 50%; margin-left: 7px;">
+      <div>
+        <a :href="'https://tonviewer.com/address/' + topHolders[3].owner.address" target="_blank" rel="noopener noreferrer">
+          <b><p style="margin-left: 10px;" class="wallet">{{ shortenAddress(topHolders[3].owner.address) }}</p></b>
+        </a>
+        <p class="tokens-wallet">{{ formatBalance(topHolders[3].balance) }}</p>
+      </div>
+    </div>
+</div>
 
     <!-- Остальные кошельки -->
 <div>
@@ -137,11 +149,11 @@ export default {
   computed: {
     // первые 3 кошелька
     topHolders() {
-      return this.holders.slice(0, 3);
+      return this.holders.slice(0, 4);
     },
     // остальные
     otherHolders() {
-      return this.holders.slice(3);
+      return this.holders.slice(4);
     }
   },
   created() {
@@ -185,5 +197,4 @@ export default {
   }
 }
 </script>
-
 
