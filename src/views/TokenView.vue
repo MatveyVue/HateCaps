@@ -71,7 +71,7 @@
         <a :href="'https://tonviewer.com/address/' + topHolders[3].owner.address" target="_blank" rel="noopener noreferrer">
           <b><p style="margin-left: 10px;" class="wallet">{{ shortenAddress(topHolders[3].owner.address) }}</p></b>
         </a>
-        <p class="tokens-wallet">{{ formatBalance(topHolders[3].balance) }}</p>
+        <p style="float: right; margin-left: 62vw;" class="tokens-wallet">{{ formatBalance(topHolders[3].balance) }}</p>
       </div>
     </div>
 </div>
