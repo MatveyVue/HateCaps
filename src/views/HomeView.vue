@@ -9,7 +9,7 @@
         <button style="background-color: #181818; color: rgb(238, 238, 238);" class="stars-rat">Stars</button>
       </RouterLink>
       <RouterLink to="token">
-        <button class="token-rat">Token</button>
+        <button style="cursor: pointer;" class="token-rat">Token</button>
       </RouterLink>
     </div>
 </center>
@@ -17,30 +17,30 @@
 <div class="profile-container">
     <div class="top-players">
       <div v-if="topPlayers.length > 1" class="stars-top2 player-container">
-          <img :src="topPlayers[1].photo" alt="Фото" style="width: 90px; height: 90px; margin-top: 40px;" class="user-photo">
-          <div style="margin-top: 110px;" class="top-2">2</div>
+          <img :src="topPlayers[1].photo" alt="Фото" style="width: 85px; height: 85px; margin-top: 40px;" class="user-photo">
+          <div style="margin-top: 105px;" class="top-2">2</div>
         <a :href="topPlayers[1].link || '#'">
-          <b><p style="margin-top: -3px; margin-left: 2px; font-size: 18px;">{{ topPlayers[1].user ? topPlayers[1].user : 'Нет данных' }}<img style="margin-top: 2px; position: absolute;" :src="topPlayers[1].cap" width="20px"></p></b><br>
+          <b><p style="margin-top: -3px; margin-left: -5px; font-size: 18px;">{{ topPlayers[1].user ? topPlayers[1].user : 'Нет данных' }}<img style="margin-top: 2px; position: absolute;" :src="topPlayers[1].cap" width="20px"></p></b><br>
         </a>
           <p style="margin-top: -38px; margin-left: -12px;">{{ topPlayers[1].stars }}<img style="position: absolute;"  src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/Stars.png?raw=true" width="20px"></p>
       </div>
     <center>
       <div v-if="topPlayers.length > 0" class="stars-top1 player-container">
-          <img :src="topPlayers[0].photo" alt="Фото" style="width: 110px; height: 110px; margin-top: 5px;" class="user-photo">
-          <div style="margin-left: -5px; margin-top: 104px;" class="top1">1</div>
+          <img :src="topPlayers[0].photo" alt="Фото" style="width: 100px; height: 100px; margin-top: 5px;" class="user-photo">
+          <div style="margin-left: 1px; margin-top: 95px;" class="top1">1</div>
         <a :href="topPlayers[0].link || '#'">
           <b><p style="margin-top: -3px; margin-left: -5px; font-size: 18px;">{{ topPlayers[0].user ? topPlayers[0].user : 'Нет данных' }}<img style="margin-top: 2px; position: absolute;" :src="topPlayers[0].cap" width="20px"></img></p></b><br>
         </a>
-          <p style="margin-top: -38px; margin-left: -10px;">{{ topPlayers[0].stars }}<img style="position: absolute; margin-top: 1px;"  src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/Stars.png?raw=true" width="20px"></p>
+          <p style="margin-top: -38px; margin-left: -7px;">{{ topPlayers[0].stars }}<img style="position: absolute; margin-top: 1px;"  src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/Stars.png?raw=true" width="20px"></p>
       </div>
     </center>
       <div v-if="topPlayers.length > 2" class="stars-top3 player-container">
-          <img :src="topPlayers[2].photo" alt="Фото" style="width: 90px; height: 90px; margin-top: 40px;" class="user-photo">
-          <div style="margin-top: 110px;" class="top-3">3</div>
+          <img :src="topPlayers[2].photo" alt="Фото" style="width: 85px; height: 85px; margin-top: 40px;" class="user-photo">
+          <div style="margin-top: 105px;" class="top-3">3</div>
           <a :href="topPlayers[2].link || '#'"> 
           <b><p style="margin-top: -3px; margin-left: -5px; font-size: 18px;">{{ topPlayers[2].user ? topPlayers[2].user : 'Нет данных' }}<img style="margin-top: 2px; position: absolute;" :src="topPlayers[2].cap" width="20px"></p></b><br>
         </a>
-          <p style="margin-top: -38px; margin-left: -12px;">{{ topPlayers[2].stars }}<img style="position: absolute;"  src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/Stars.png?raw=true" width="20px"></p>
+          <p style="margin-top: -38px; margin-left: -10px;">{{ topPlayers[2].stars }}<img style="position: absolute;"  src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/Stars.png?raw=true" width="20px"></p>
        </div>
     </div>
 </div>
