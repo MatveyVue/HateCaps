@@ -6,7 +6,7 @@
 <center>
 <div class="top-rating">
 <RouterLink to="/">
-    <button class="stars-rat">Stars</button>
+    <button style="cursor: pointer;" class="stars-rat">Stars</button>
 </RouterLink>
 <RouterLink to="token">
     <button style="background-color: #181818; color: rgb(238, 238, 238);" class="token-rat">Token</button>
@@ -15,7 +15,7 @@
 </center>
 
 <div>
-<div style="display: flex; justify-content: center; gap: 7vw; margin-top: 10px;" v-if="topHolders.length">
+<div style="display: flex; justify-content: center; gap: 7vw; margin-top: 15px; display: flex; align-items: center;" v-if="topHolders.length">
 
 <div v-if="topHolders.length > 1" :style="{ 'text-align': 'center', 'margin-top': '30px' }">
     <img style="border-radius: 50%;" src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/StonFi.png?raw=true" width="90px" alt="Holder Image">
