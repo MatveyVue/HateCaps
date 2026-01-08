@@ -32,7 +32,7 @@
   <!-- Центральный держатель (самый большой) -->
 <div :style="{ 'text-align': 'center' }">
     <img style="border-radius: 50%;" src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/Scrooge.jpg?raw=true" width="110px" alt="Holder Image">
-    <div style="margin-top: -17px; margin-left: -5px" class="top1">1</div>
+    <div style="margin-top: -17px; margin-left: -10px" class="top1">1</div>
 <div style="margin-top: 5px;">
     <a :href="'https://tonviewer.com/address/' + topHolders[0].owner.address" target="_blank" rel="noopener noreferrer">
       <b>{{ shortenAddress(topHolders[0].owner.address) }}</b>
