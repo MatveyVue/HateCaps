@@ -6,7 +6,7 @@
 <center>
 <div class="top-rating">
 <RouterLink to="/">
-    <button style="cursor: pointer;" class="stars-rat">Stars</button>
+    <button class="stars-rat">Stars</button>
 </RouterLink>
 <RouterLink to="token">
     <button style="background-color: #181818; color: rgb(238, 238, 238);" class="token-rat">Token</button>
@@ -32,7 +32,7 @@
   <!-- Центральный держатель (самый большой) -->
 <div :style="{ 'text-align': 'center' }">
     <img style="border-radius: 50%;" src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/Scrooge.jpg?raw=true" width="110px" alt="Holder Image">
-    <div style="margin-top: -17px; margin-left: -10px" class="top1">1</div>
+    <div style="margin-top: -17px;" class="top1">1</div>
 <div style="margin-top: 5px;">
     <a :href="'https://tonviewer.com/address/' + topHolders[0].owner.address" target="_blank" rel="noopener noreferrer">
       <b>{{ shortenAddress(topHolders[0].owner.address) }}</b>
@@ -44,7 +44,7 @@
 
 
 <div v-if="topHolders.length > 2" :style="{ 'text-align': 'center', 'margin-top': '30px' }">
-    <img style="border-radius: 50%;" src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/Webby.jpg?raw=true" width="90px" alt="Holder Image">
+    <img style="border-radius: 50%;" src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/Rstm.jpg?raw=true" width="90px" alt="Holder Image">
     <div style="margin-left: 9vw; margin-top: -25px;" class="top-3">3</div>
 <div style="margin-top: 3px;">
     <a :href="'https://tonviewer.com/address/' + topHolders[2].owner.address" target="_blank" rel="noopener noreferrer">
@@ -66,7 +66,7 @@
 
 <div>
     <div class="border-wallet" v-if="topHolders.length > 3" style="display: flex; align-items: center; gap: 10px;">
-      <img src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/Rstm%20Crew.jpg?raw=true" width="40px" alt="Holder Avatar" style="border-radius: 50%; margin-left: 7px;">
+      <img src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/Webby.jpg?raw=true" width="45px" alt="Holder Avatar" style="border-radius: 50%; margin-left: 5px;">
       <div>
         <a :href="'https://tonviewer.com/address/' + topHolders[3].owner.address" target="_blank" rel="noopener noreferrer">
           <b><p style="margin-left: 10px;" class="wallet">{{ shortenAddress(topHolders[3].owner.address) }}</p></b>
