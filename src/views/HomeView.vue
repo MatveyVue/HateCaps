@@ -47,7 +47,7 @@
 
 <div style="margin-top: -20px;" class="banner">
     <a href="https://t.me/+x4-ZMCjs8y0zNDQ0">
-        <img class="banner" src="https://github.com/MatveyVue/icopn/blob/main/Banner.jpg?raw=true"></img>
+        <img class="banner" src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/IMG_8907.jpeg?raw=true"></img>
     </a>
 </div>
 <p style="color: rgb(20, 20, 20); font-size: 5px;">.</p>
