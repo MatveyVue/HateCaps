@@ -52,12 +52,12 @@
         />
         <input
           v-model="priceToInput"
-          class="filter-input"
+          class="filter-input price-to"
           type="text"
           inputmode="decimal"
           placeholder="Price to"
         />
-        <select v-model="selectedMarkets" class="filter-select" multiple size="4">
+        <select v-model="selectedMarkets" class="filter-select market-select" multiple size="4">
           <option v-for="market in marketOptions" :key="market" :value="market">
             {{ market }}
           </option>

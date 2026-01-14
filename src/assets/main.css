@@ -316,6 +316,12 @@ a {
   font-family: Geologica;
 }
 
+.filter-input.price-to {
+  flex: 0 0 110px;
+  width: 110px;
+  max-width: 110px;
+}
+
 .filter-btn {
   border: none;
   border-radius: 12px;
@@ -473,6 +479,10 @@ a {
   background-color: #141414;
   color: white;
   font-family: Geologica;
+}
+
+.filter-select.market-select {
+  min-height: 140px;
 }
 
 .filter-actions {
