@@ -43,6 +43,25 @@
           inputmode="numeric"
           placeholder="Number"
         />
+        <input
+          v-model="priceFromInput"
+          class="filter-input"
+          type="text"
+          inputmode="decimal"
+          placeholder="Price from"
+        />
+        <input
+          v-model="priceToInput"
+          class="filter-input"
+          type="text"
+          inputmode="decimal"
+          placeholder="Price to"
+        />
+        <select v-model="selectedMarkets" class="filter-select" multiple size="4">
+          <option v-for="market in marketOptions" :key="market" :value="market">
+            {{ market }}
+          </option>
+        </select>
       </div>
       <div class="filter-actions">
         <button class="filter-btn" type="button" @click="applyFilters" :disabled="loading">
@@ -151,6 +170,19 @@ const selectedModel = ref('All')
 const selectedBackdrop = ref('All')
 const selectedSymbol = ref('All')
 const numberInput = ref('')
+const priceFromInput = ref('')
+const priceToInput = ref('')
+const marketOptions = [
+  'tonnel',
+  'portals',
+  'mrkt',
+  'fragment',
+  'marketapp',
+  'getgems',
+  'onchain',
+  'offchain',
+]
+const selectedMarkets = ref([])
 
 const gifts = ref([])
 const currentPage = ref(0)
@@ -252,6 +284,22 @@ function normalizeValue(value) {
   return trimmed === '' ? 'All' : trimmed
 }
 
+function parsePrice(value) {
+  const trimmed = String(value || '').trim()
+  if (trimmed === '') return null
+  const parsed = Number.parseFloat(trimmed)
+  return Number.isFinite(parsed) ? parsed : null
+}
+
+function resolvePriceRange() {
+  const fromValue = parsePrice(priceFromInput.value)
+  const toValue = parsePrice(priceToInput.value)
+  if (fromValue == null && toValue == null) return null
+  const from = fromValue ?? 0
+  const to = toValue ?? fromValue
+  return { from, to }
+}
+
 function handleCollectionChange() {
   const collection = normalizeValue(selectedCollection.value)
   if (collection === 'All' || !rarityIndex.value.has(collection)) {
@@ -278,20 +326,33 @@ function handleCollectionChange() {
 
 function buildPayload() {
   const parsedNumber = Number.parseInt(numberInput.value, 10)
-  return {
+  const priceRange = resolvePriceRange()
+  const payload = {
     name: normalizeValue(selectedCollection.value),
     model: normalizeValue(selectedModel.value),
     symbol: normalizeValue(selectedSymbol.value),
     backdrop: normalizeValue(selectedBackdrop.value),
     number: Number.isFinite(parsedNumber) ? parsedNumber : null,
   }
+  if (priceRange) {
+    payload.from = priceRange.from
+    payload.to = priceRange.to
+  }
+  const markets = selectedMarkets.value.filter(Boolean)
+  if (markets.length > 0) {
+    payload.market = markets
+  }
+  return payload
 }
 
 async function fetchNextPage() {
   if (loading.value || allLoaded.value) return
 
   const page = currentPage.value
-  const cacheKey = `${page}|${selectedCollection.value}|${selectedModel.value}|${selectedSymbol.value}|${selectedBackdrop.value}|${numberInput.value}`
+  const priceRange = resolvePriceRange()
+  const rangeKey = priceRange ? `${priceRange.from}:${priceRange.to}` : 'none'
+  const marketsKey = selectedMarkets.value.length > 0 ? selectedMarkets.value.join(',') : 'all'
+  const cacheKey = `${page}|${selectedCollection.value}|${selectedModel.value}|${selectedSymbol.value}|${selectedBackdrop.value}|${numberInput.value}|${rangeKey}|${marketsKey}`
   if (pageCache.has(cacheKey)) {
     gifts.value = [...gifts.value, ...pageCache.get(cacheKey)]
     currentPage.value += 1
@@ -336,6 +397,9 @@ function resetFilters() {
   selectedBackdrop.value = 'All'
   selectedSymbol.value = 'All'
   numberInput.value = ''
+  priceFromInput.value = ''
+  priceToInput.value = ''
+  selectedMarkets.value = []
   handleCollectionChange()
   applyFilters()
 }

@@ -23,6 +23,25 @@
       placeholder="Number (e.g. 133)"
       min="1"
     />
+    <input
+      v-model="priceFromInput"
+      class="filter-input"
+      type="text"
+      inputmode="decimal"
+      placeholder="Price from"
+    />
+    <input
+      v-model="priceToInput"
+      class="filter-input"
+      type="text"
+      inputmode="decimal"
+      placeholder="Price to"
+    />
+    <select v-model="selectedMarkets" class="filter-input" multiple size="4">
+      <option v-for="market in marketOptions" :key="market" :value="market">
+        {{ market }}
+      </option>
+    </select>
     <button class="filter-btn" type="button" @click="applyFilters" :disabled="loading">
       Search
     </button>
@@ -112,19 +131,58 @@ const allLoaded = ref(false)
 const errorMessage = ref('')
 const backdropInput = ref('')
 const numberInput = ref('')
+const priceFromInput = ref('')
+const priceToInput = ref('')
+const marketOptions = [
+  'tonnel',
+  'portals',
+  'mrkt',
+  'fragment',
+  'marketapp',
+  'getgems',
+  'onchain',
+  'offchain',
+]
+const selectedMarkets = ref([])
 
 const isInitialLoading = computed(() => loading.value && gifts.value.length === 0)
 
 function buildPayload() {
   const backdrop = backdropInput.value.trim()
   const parsedNumber = Number.parseInt(numberInput.value, 10)
-  return {
+  const priceRange = resolvePriceRange()
+  const payload = {
     name: props.giftName,
     model: 'All',
     symbol: 'All',
     backdrop: backdrop ? backdrop : 'All',
     number: Number.isFinite(parsedNumber) ? parsedNumber : null,
   }
+  if (priceRange) {
+    payload.from = priceRange.from
+    payload.to = priceRange.to
+  }
+  const markets = selectedMarkets.value.filter(Boolean)
+  if (markets.length > 0) {
+    payload.market = markets
+  }
+  return payload
+}
+
+function parsePrice(value) {
+  const trimmed = String(value || '').trim()
+  if (trimmed === '') return null
+  const parsed = Number.parseFloat(trimmed)
+  return Number.isFinite(parsed) ? parsed : null
+}
+
+function resolvePriceRange() {
+  const fromValue = parsePrice(priceFromInput.value)
+  const toValue = parsePrice(priceToInput.value)
+  if (fromValue == null && toValue == null) return null
+  const from = fromValue ?? 0
+  const to = toValue ?? fromValue
+  return { from, to }
 }
 
 async function fetchGifts() {
@@ -169,6 +227,9 @@ function applyFilters() {
 function resetFilters() {
   backdropInput.value = ''
   numberInput.value = ''
+  priceFromInput.value = ''
+  priceToInput.value = ''
+  selectedMarkets.value = []
   applyFilters()
 }
 
