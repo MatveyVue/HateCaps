@@ -11,6 +11,7 @@ function buildCacheKey(payload, page) {
     payload.symbol,
     payload.backdrop,
     payload.number ?? 'null',
+    payload.receiver,
     page,
   ]
   return `swiftgifts:${parts.map((part) => String(part)).join('|')}`
