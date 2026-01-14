@@ -12,7 +12,6 @@ function buildCacheKey(payload, page) {
     payload.model,
     payload.symbol,
     payload.backdrop,
-    payload.receiver,
     payload.number ?? 'null',
     page,
   ]
