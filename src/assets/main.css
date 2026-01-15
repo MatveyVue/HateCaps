@@ -1017,6 +1017,7 @@ a {
   border-radius: 999px;
   overflow: hidden;
   margin-bottom: -80vh;
+  border-radius: 15px;
 }
 
 .app-loader-fill {
