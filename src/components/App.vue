@@ -1,6 +1,6 @@
 <template>
 <div v-if="showAppLoader" class="app-loader">
-  <img class="app-loader-logo" src="./cap.png" alt="Cap logo">
+  <img class="app-loader-logo" src="./Preloader.jpg" alt="Cap logo">
   <div class="app-loader-bar">
     <div class="app-loader-fill"></div>
   </div>
@@ -20,6 +20,6 @@ const showAppLoader = ref(true)
 onMounted(() => {
   setTimeout(() => {
     showAppLoader.value = false
-  }, 2500)
+  }, 5000)
 })
 </script>
