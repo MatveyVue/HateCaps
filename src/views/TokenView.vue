@@ -18,7 +18,7 @@
 <div style="display: flex; justify-content: center; gap: 7vw; margin-top: 15px; display: flex; align-items: center;" v-if="topHolders.length">
 
 <div v-if="topHolders.length > 1" :style="{ 'text-align': 'center', 'margin-top': '30px' }">
-    <img style="border-radius: 50%;" src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/StonFi.png?raw=true" width="90px" alt="Holder Image">
+    <img style="border-radius: 50%;" :src="getAvatar(topHolders[1].owner.address)" width="90px" alt="Holder Image">
     <div style="margin-left: 9vw; margin-top: -25px;" class="top-2">2</div>
 <div style="margin-top: 3px;">
     <a :href="'https://tonviewer.com/address/' + topHolders[1].owner.address" target="_blank" rel="noopener noreferrer">
@@ -31,7 +31,7 @@
 
   <!-- Центральный держатель (самый большой) -->
 <div :style="{ 'text-align': 'center' }">
-    <img style="border-radius: 50%;" src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/Scrooge.jpg?raw=true" width="110px" alt="Holder Image">
+    <img style="border-radius: 50%;" :src="getAvatar(topHolders[0].owner.address)" width="110px" alt="Holder Image">
     <div style="margin-top: -17px;" class="top1">1</div>
 <div style="margin-top: 5px;">
     <a :href="'https://tonviewer.com/address/' + topHolders[0].owner.address" target="_blank" rel="noopener noreferrer">
@@ -44,7 +44,7 @@
 
 
 <div v-if="topHolders.length > 2" :style="{ 'text-align': 'center', 'margin-top': '30px' }">
-    <img style="border-radius: 50%;" src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/holders.jpg?raw=true" width="90px" alt="Holder Image">
+    <img style="border-radius: 50%;" :src="getAvatar(topHolders[2].owner.address)" width="90px" alt="Holder Image">
     <div style="margin-left: 9vw; margin-top: -25px;" class="top-3">3</div>
 <div style="margin-top: 3px;">
     <a :href="'https://tonviewer.com/address/' + topHolders[2].owner.address" target="_blank" rel="noopener noreferrer">
@@ -59,14 +59,14 @@
 <p style="color: rgb(20, 20, 20); font-size: 10px;">.</p>
 <div class="banner">
     <a href="https://t.me/+x4-ZMCjs8y0zNDQ0">
-        <img class="banner" src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/IMG_8907.jpeg?raw=true"></img>
+        <img class="banner" src="https://github.com/MatveyVue/icopn/blob/main/Banner.jpg?raw=true"></img>
     </a>
 </div>
 <p style="color: rgb(20, 20, 20); font-size: 5px;">.</p>
 
 <div>
     <div class="border-wallet" v-if="topHolders.length > 3" style="display: flex; align-items: center; gap: 10px;">
-      <img src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/Rstm.jpg?raw=true" width="45px" alt="Holder Avatar" style="border-radius: 50%; margin-left: 5px;">
+      <img :src="getAvatar(topHolders[3].owner.address)" width="45px" alt="Holder Avatar" style="border-radius: 50%; margin-left: 5px;">
       <div>
         <a :href="'https://tonviewer.com/address/' + topHolders[3].owner.address" target="_blank" rel="noopener noreferrer">
           <b><p style="margin-left: 10px;" class="wallet">{{ shortenAddress(topHolders[3].owner.address) }}</p></b>
@@ -76,22 +76,10 @@
     </div>
 </div>
 
-<div>
-    <div class="border-wallet" v-if="topHolders.length > 4" style="display: flex; align-items: center; gap: 10px;">
-      <img src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/Webby.jpg?raw=true" width="45px" alt="Holder Avatar" style="border-radius: 50%; margin-left: 5px;">
-      <div>
-        <a :href="'https://tonviewer.com/address/' + topHolders[4].owner.address" target="_blank" rel="noopener noreferrer">
-          <b><p style="margin-left: 10px;" class="wallet">{{ shortenAddress(topHolders[4].owner.address) }}</p></b>
-        </a>
-        <p style="float: right; margin-left: 62vw;" class="tokens-wallet">{{ formatBalance(topHolders[3].balance) }}</p>
-      </div>
-    </div>
-</div>
-
     <!-- Остальные кошельки -->
 <div>
-    <div class="border-wallet" v-for="holder in otherHolders" :key="holder.address" style="display: flex; align-items: center; gap: 10px;">
-      <img src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/holders.jpg?raw=true" width="45px" alt="Holder Avatar" style="border-radius: 50%; margin-left: 5px;">
+    <div class="border-wallet" v-for="holder in otherHolders" :key="holder.owner.address" style="display: flex; align-items: center; gap: 10px;">
+      <img :src="getAvatar(holder.owner.address)" width="45px" alt="Holder Avatar" style="border-radius: 50%; margin-left: 5px;">
       <div>
         <a :href="'https://tonviewer.com/address/' + holder.owner.address" target="_blank" rel="noopener noreferrer">
           <b><p class="wallet">{{ shortenAddress(holder.owner.address) }}</p></b>
@@ -119,6 +107,12 @@
         <p style="margin-top: 40px;">Top</p>
     </button>
 </RouterLink>
+<RouterLink to="/games">
+    <button class="game" @click="triggerMediumHaptic">
+        <img style="position: absolute; margin-left: -23px; margin-top: -4px;" src="https://github.com/MatveyVue/icopn/blob/main/Game.PNG?raw=true" width="45px"></img>
+        <p style="margin-top: 40px;">Game</p>
+    </button>
+</RouterLink>
 <RouterLink to="/profile">
     <button class="profile" @click="triggerMediumHaptic">
         <img style="position: absolute; margin-left: -18px;" src="https://github.com/MatveyVue/icopn/blob/main/Profile.png?raw=true" width="35px"></img>
@@ -139,33 +133,51 @@ export default {
     onMounted(() => {
       isLoading.value = true;
 
-      // setTimeout для скрытия preloader (теперь в setup)
       setTimeout(() => {
         const preloader = document.getElementById('preloader');
         if (preloader) {
           preloader.classList.add('hidden');
-          isLoading.value = false; // Скрываем индикатор загрузки после выполнения setTimeout
+          isLoading.value = false;
         }
       }, 5000);
-
-       // window.addEventListener('load' больше не нужен, т.к. код выполняется после монтирования
     });
 
     return { isLoading };
   },
   data() {
     return {
-      holders: []
+      holders: [],
+      // СТАТИЧЕСКИЙ словарь с привязкой КОНКРЕТНЫХ адресов к аватаркам
+      avatarMap: {
+        // Пример реальных адресов (замените на свои)
+        // Адрес для 1-го места (Scrooge)
+        '0:76b614e18f3bd8a78f8aeccb4c525e634df6203a0b195f53b3603c9fd604925f': 'https://github.com/MatveyVue/Profiles-Telegram/blob/main/Scrooge.jpg?raw=true',
+        
+        // Адрес для 2-го места (StonFi)  
+        '0:d36f5c354c2a2116a9cd7323ebadb6c1250740c303e7f036c2a1a4947744b94f': 'https://github.com/MatveyVue/Profiles-Telegram/blob/main/StonFi.png?raw=true',        
+        
+        // Адрес для 4-го места (Webby)
+        '0:5e4ef4483c6b31fe169ee265f31b8ce676bf4980f7ac3cf29d4c227d66a3e26a': 'https://github.com/MatveyVue/Profiles-Telegram/blob/main/Webby.jpg?raw=true',
+        
+        // Адрес для 5-го места (специальная аватарка)
+        '0:027749cd26265ca584c6ac7f7fce9ebfb1449556a88122865eebd68af8b2d0ce': 'https://github.com/MatveyVue/Profiles-Telegram/blob/main/Rstm.jpg?raw=true',
+      },
+      // Добавляем positionAvatars, так как на него есть ссылка в getAvatar
+      positionAvatars: {
+        1: 'https://github.com/MatveyVue/Profiles-Telegram/blob/main/Scrooge.jpg?raw=true',
+        2: 'https://github.com/MatveyVue/Profiles-Telegram/blob/main/StonFi.png?raw=true',
+        3: 'https://github.com/MatveyVue/Profiles-Telegram/blob/main/holders.jpg?raw=true',
+        4: 'https://github.com/MatveyVue/Profiles-Telegram/blob/main/Webby.jpg?raw=true',
+        5: 'https://github.com/MatveyVue/Profiles-Telegram/blob/main/Rstm.jpg?raw=true',
+      }
     }
   },
   computed: {
-    // первые 3 кошелька
     topHolders() {
-      return this.holders.slice(0, 5);
+      return this.holders.slice(0, 4);
     },
-    // остальные
     otherHolders() {
-      return this.holders.slice(5);
+      return this.holders.slice(4);
     }
   },
   created() {
@@ -181,16 +193,45 @@ export default {
               balance: holder.balance,
               owner: holder.owner
             }));
+            
+            // Выводим в консоль первые 10 адресов, чтобы их скопировать
+            console.log('Первые 10 адресов держателей:');
+            this.holders.slice(0, 10).forEach((holder, index) => {
+              console.log(`${index + 1}: ${holder.owner.address}`);
+            });
           }
         })
         .catch(error => {
           console.error('Error fetching data:', error);
         });
     },
+    
+    getAvatar(address) {
+      // ПРОВЕРЯЕМ: если адрес есть в статическом avatarMap, возвращаем аватарку
+      if (this.avatarMap[address]) {
+        console.log(`Найдена специальная аватарка для адреса: ${this.shortenAddress(address)}`);
+        return this.avatarMap[address];
+      }
+      
+      // Если не нашли в статическом мапе, проверяем позицию
+      const holderIndex = this.holders.findIndex(h => h.owner.address === address);
+      if (holderIndex !== -1 && holderIndex < 5) {
+        // Для первых 5 мест можно использовать positionAvatars
+        const position = holderIndex + 1;
+        if (this.positionAvatars[position]) {
+          return this.positionAvatars[position];
+        }
+      }
+      
+      // Иначе возвращаем аватарку по умолчанию
+      return 'https://github.com/MatveyVue/Profiles-Telegram/blob/main/holders.jpg?raw=true';
+    },
+    
     shortenAddress(address) {
       if (!address || address.length < 10) return address;
       return address.slice(0, 5) + '...' + address.slice(-2);
     },
+    
     formatBalance(balance) {
       console.log('Исходный баланс:', balance);
       let num = parseFloat(balance);
@@ -205,8 +246,17 @@ export default {
       } else {
         return num.toFixed(2);
       }
+    },
+    
+    // Добавляем отсутствующий метод triggerMediumHaptic
+    triggerMediumHaptic() {
+      // Если используете Telegram WebApp, можно добавить тактильную отдачу
+      if (window.Telegram?.WebApp?.HapticFeedback) {
+        window.Telegram.WebApp.HapticFeedback.impactOccurred('medium');
+      }
+      // Или просто пустая функция, если тактильная отдача не нужна
+      console.log('Haptic feedback triggered');
     }
   }
 }
 </script>
-
