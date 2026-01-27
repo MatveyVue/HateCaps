@@ -12,13 +12,15 @@
         </div>
       </div>
       
-    <center>
-      <div class="time-bar" :style="{ width: timePercent + '%' }"></div>
-    </center>
+      <center>
+        <div class="time-bar" :style="{ width: timePercent + '%' }"></div>
+      </center>
       
       <div class="user-info" v-if="userData.username && userData.username !== 'Guest'">
         {{ userData.username }}
       </div>
+      
+      <div style="display: none" class="best-score-display" v-if="bestScore > 0">Best: {{ bestScore }}</div>
     </div>
     
     <div 
@@ -26,6 +28,9 @@
       @pointerdown="startDrag"
       @pointermove="moveDrag"
       @pointerup="stopDrag"
+      @touchstart="handleTouchStart"
+      @touchmove="handleTouchMove"
+      @touchend="stopDrag"
     >
       <div 
         v-for="item in items" 
@@ -54,6 +59,9 @@
         {{ saveMessage }}
       </div>
       <button @click="restartGame">PLAY AGAIN</button>
+      <button v-if="!firebaseInitialized && saveError" @click="retrySave" class="retry-btn">
+        🔄 Retry Save
+      </button>
     </div>
   </div>
 </template>
@@ -77,18 +85,65 @@ const firebaseConfig = {
 let db = null;
 let firebaseInitialized = ref(false);
 
+// Динамическая загрузка Firebase
+const loadFirebase = () => {
+  return new Promise((resolve) => {
+    if (typeof firebase !== 'undefined') {
+      console.log('✅ Firebase уже загружен');
+      resolve(true);
+      return;
+    }
+
+    console.log('⬇️ Загружаем Firebase SDK...');
+    
+    // Загружаем Firebase скрипты
+    const script1 = document.createElement('script');
+    script1.src = 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js';
+    script1.onload = () => {
+      const script2 = document.createElement('script');
+      script2.src = 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js';
+      script2.onload = () => {
+        console.log('✅ Firebase SDK загружены');
+        resolve(true);
+      };
+      script2.onerror = () => {
+        console.error('❌ Ошибка загрузки Firestore');
+        resolve(false);
+      };
+      document.head.appendChild(script2);
+    };
+    script1.onerror = () => {
+      console.error('❌ Ошибка загрузки Firebase App');
+      resolve(false);
+    };
+    document.head.appendChild(script1);
+  });
+};
+
 // Проверка Firebase
 const checkFirebase = () => {
-  return typeof firebase !== 'undefined' && firebase.app && firebase.firestore;
+  return typeof firebase !== 'undefined' && 
+         firebase.app && 
+         typeof firebase.initializeApp === 'function' &&
+         typeof firebase.firestore === 'function';
 };
 
 // Инициализация Firebase
-const initFirebase = () => {
+const initFirebase = async () => {
   console.log('🔥 Инициализация Firebase...');
   
   try {
+    // Сначала загружаем Firebase SDK если они не загружены
+    const loaded = await loadFirebase();
+    if (!loaded) {
+      console.log('❌ Не удалось загрузить Firebase SDK');
+      firebaseInitialized.value = false;
+      return false;
+    }
+
+    // Проверяем, доступен ли Firebase после загрузки
     if (!checkFirebase()) {
-      console.log('❌ Firebase SDK не загружен');
+      console.log('❌ Firebase SDK не готов после загрузки');
       firebaseInitialized.value = false;
       return false;
     }
@@ -169,28 +224,25 @@ const initUser = () => {
     tg.expand();
     
     const user = tg.initDataUnsafe?.user;
-    console.log('👤 Полные данные Telegram user:', user);
+    console.log('👤 Данные Telegram user:', user);
     
     if (user) {
-      // Сохраняем ВСЕ данные пользователя из Telegram
       userData.value = {
         id: user.id.toString(),
-        username: user.username || '',
-        firstName: user.first_name || '',
+        username: user.username || 'TelegramUser',
+        firstName: user.first_name || 'User',
         lastName: user.last_name || '',
         languageCode: user.language_code || '',
         isPremium: user.is_premium || false,
         photoUrl: user.photo_url || '',
         isBot: user.is_bot || false,
-        // Добавляем дополнительные данные из Telegram
         telegramId: user.id.toString(),
         telegramUsername: user.username || '',
         telegramFirstName: user.first_name || '',
         telegramLastName: user.last_name || '',
-        // Для отображения в игре
         displayName: user.username || user.first_name || 'Player'
       };
-      console.log('✅ Telegram пользователь сохранен:', userData.value);
+      console.log('✅ Telegram пользователь:', userData.value);
     } else {
       // Telegram без пользователя
       userData.value = {
@@ -203,8 +255,9 @@ const initUser = () => {
     }
   } else {
     // Веб-пользователь
-    const userId = localStorage.getItem('web_user_id') || `web_${Date.now()}`;
-    if (!localStorage.getItem('web_user_id')) {
+    let userId = localStorage.getItem('web_user_id');
+    if (!userId) {
+      userId = `web_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       localStorage.setItem('web_user_id', userId);
     }
     
@@ -212,13 +265,14 @@ const initUser = () => {
       id: userId,
       username: 'WebPlayer',
       firstName: 'Player',
-      displayName: 'WebPlayer'
+      displayName: 'WebPlayer',
+      isTelegram: false
     };
-    console.log('🌐 Веб-пользователь создан');
+    console.log('🌐 Веб-пользователь:', userData.value);
   }
   
   // Загружаем лучший счет из localStorage
-  const saved = localStorage.getItem(`best_${userData.value.id}`);
+  const saved = localStorage.getItem(`best_score_${userData.value.id}`);
   if (saved) {
     bestScore.value = parseInt(saved) || 0;
     console.log('📊 Лучший счет из localStorage:', bestScore.value);
@@ -261,27 +315,26 @@ const loadBestScoreFromFirebase = async () => {
   try {
     console.log('🔍 Загружаем лучший счет из Firebase для ID:', userData.value.id);
     
-    const timeoutPromise = new Promise((_, reject) => {
-      setTimeout(() => reject(new Error('Firebase timeout')), 3000);
-    });
-    
     const playerRef = db.collection('players').doc(userData.value.id);
-    const playerPromise = playerRef.get();
-    
-    const playerDoc = await Promise.race([playerPromise, timeoutPromise]);
+    const playerDoc = await playerRef.get();
     
     if (playerDoc.exists) {
       const data = playerDoc.data();
       console.log('📊 Данные игрока из Firebase:', data);
       
-      if (data.bestScore !== undefined) {
-        const firebaseBestScore = Number(data.bestScore);
-        if (firebaseBestScore > bestScore.value) {
-          bestScore.value = firebaseBestScore;
-          localStorage.setItem(`best_${userData.value.id}`, bestScore.value.toString());
-          console.log('✅ Обновлен лучший счет из Firebase:', bestScore.value);
-        }
+      const firebaseBestScore = Number(data.bestScore) || 0;
+      const localBestScore = Number(bestScore.value) || 0;
+      
+      // Берем максимальный счет между Firebase и локальным
+      const maxScore = Math.max(firebaseBestScore, localBestScore);
+      
+      if (maxScore > bestScore.value) {
+        bestScore.value = maxScore;
+        localStorage.setItem(`best_score_${userData.value.id}`, bestScore.value.toString());
+        console.log('✅ Обновлен лучший счет:', bestScore.value);
       }
+    } else {
+      console.log('👤 Игрок не найден в Firebase');
     }
   } catch (error) {
     console.log('⚠️ Ошибка загрузки из Firebase:', error.message);
@@ -291,17 +344,16 @@ const loadBestScoreFromFirebase = async () => {
 // Сохранение в Firebase
 const saveToFirebase = async () => {
   console.log('💾 Начинаем сохранение в Firebase...');
-  console.log('👤 Данные пользователя для сохранения:', userData.value);
+  console.log('👤 Пользователь:', userData.value.id);
   console.log('🎯 Счет:', score.value);
   console.log('🏆 Новый рекорд?', isNewRecord.value);
-  console.log('🔥 Firebase статус:', firebaseInitialized.value);
   
   saveMessage.value = 'Saving...';
   saveSuccess.value = false;
   saveError.value = false;
   
   // Всегда сохраняем в localStorage
-  localStorage.setItem(`best_${userData.value.id}`, score.value.toString());
+  localStorage.setItem(`best_score_${userData.value.id}`, bestScore.value.toString());
   console.log('📁 Сохранено в localStorage');
   
   // Проверяем Firebase
@@ -313,148 +365,125 @@ const saveToFirebase = async () => {
   }
   
   try {
-    // Подготовка данных для сохранения
     const timestamp = new Date().toISOString();
     const dateStr = new Date().toLocaleDateString('ru-RU');
     
-    // 1. Сохраняем запись об игре с ВСЕМИ данными
-    const gameData = {
-      // Данные пользователя из Telegram
+    // Подготовка базовых данных
+    const basePlayerData = {
       userId: userData.value.id,
-      telegramId: userData.value.telegramId || userData.value.id,
       username: userData.value.username || '',
       firstName: userData.value.firstName || '',
       lastName: userData.value.lastName || '',
-      languageCode: userData.value.languageCode || '',
-      isPremium: userData.value.isPremium || false,
-      isBot: userData.value.isBot || false,
-      photoUrl: userData.value.photoUrl || '',
-      
-      // Игровые данные
-      score: score.value,
-      isNewRecord: isNewRecord.value || false,
-      timestamp: timestamp,
-      date: dateStr,
-      platform: window.Telegram?.WebApp ? 'telegram' : 'web',
-      
-      // Метаданные
-      userAgent: navigator.userAgent,
-      screenResolution: `${window.screen.width}x${window.screen.height}`,
-      gameVersion: '1.0.0'
+      fullName: `${userData.value.firstName || ''} ${userData.value.lastName || ''}`.trim(),
+      isTelegram: !!userData.value.telegramId,
+      lastUpdated: timestamp,
+      bestScore: bestScore.value,
+      lastScore: score.value
     };
     
-    console.log('📝 Сохраняем игру в коллекцию games:', gameData);
-    
-    try {
-      const gamesRef = db.collection('games');
-      const gameResult = await gamesRef.add(gameData);
-      console.log('✅ Игра сохранена, ID:', gameResult.id);
-    } catch (gameError) {
-      console.error('❌ Ошибка сохранения игры:', gameError.message);
-      throw gameError;
+    // Добавляем Telegram данные если есть
+    if (userData.value.telegramId) {
+      basePlayerData.telegramId = userData.value.telegramId;
+      basePlayerData.telegramUsername = userData.value.telegramUsername || '';
+      basePlayerData.languageCode = userData.value.languageCode || '';
+      basePlayerData.isPremium = userData.value.isPremium || false;
+      basePlayerData.isBot = userData.value.isBot || false;
+      basePlayerData.photoUrl = userData.value.photoUrl || '';
     }
     
-    // 2. Обновляем/создаем запись игрока с ВСЕМИ данными
+    console.log('📝 Сохраняем данные игрока:', basePlayerData);
+    
+    // Обновляем запись игрока
     const playerRef = db.collection('players').doc(userData.value.id);
     
     try {
-      // Получаем текущие данные
       const playerDoc = await playerRef.get();
-      const now = new Date().toISOString();
-      
-      // Подготовка полных данных игрока
-      let playerData = {
-        // Основные данные
-        userId: userData.value.id,
-        telegramId: userData.value.telegramId || userData.value.id,
-        
-        // Данные профиля Telegram
-        username: userData.value.username || '',
-        firstName: userData.value.firstName || '',
-        lastName: userData.value.lastName || '',
-        fullName: `${userData.value.firstName || ''} ${userData.value.lastName || ''}`.trim(),
-        languageCode: userData.value.languageCode || '',
-        isPremium: userData.value.isPremium || false,
-        isBot: userData.value.isBot || false,
-        photoUrl: userData.value.photoUrl || '',
-        
-        // Игровые данные
-        lastScore: score.value,
-        lastPlayed: now,
-        updatedAt: now,
-        bestScore: Math.max(bestScore.value, score.value),
-        
-        // Метаданные
-        platform: window.Telegram?.WebApp ? 'telegram' : 'web',
-        registrationDate: playerDoc.exists ? (playerDoc.data().registrationDate || now) : now,
-        totalGames: playerDoc.exists ? ((playerDoc.data().totalGames || 0) + 1) : 1
-      };
       
       if (playerDoc.exists) {
-        const existing = playerDoc.data();
-        playerData.gamesPlayed = (existing.gamesPlayed || 0) + 1;
-        playerData.totalScore = (existing.totalScore || 0) + score.value;
-        playerData.bestScore = Math.max(existing.bestScore || 0, score.value);
-        playerData.createdAt = existing.createdAt || now;
+        // Обновляем существующего игрока
+        const existingData = playerDoc.data();
+        const newGamesPlayed = (existingData.gamesPlayed || 0) + 1;
+        const newTotalScore = (existingData.totalScore || 0) + score.value;
         
-        // Сохраняем историю рекордов
-        if (score.value > (existing.bestScore || 0)) {
-          playerData.recordHistory = [
-            ...(existing.recordHistory || []),
-            {
-              score: score.value,
-              date: now,
-              isNewRecord: true
-            }
-          ];
+        const updateData = {
+          ...basePlayerData,
+          gamesPlayed: newGamesPlayed,
+          totalScore: newTotalScore,
+          updatedAt: timestamp,
+          lastPlayed: timestamp
+        };
+        
+        // Добавляем историю рекорда если это новый рекорд
+        if (isNewRecord.value) {
+          const recordHistory = existingData.recordHistory || [];
+          recordHistory.push({
+            score: score.value,
+            date: timestamp,
+            isNewRecord: true
+          });
+          updateData.recordHistory = recordHistory;
         }
         
-        console.log('📊 Обновляем существующего игрока');
+        await playerRef.update(updateData);
+        console.log('✅ Игрок обновлен в Firebase');
       } else {
         // Создаем нового игрока
-        playerData.gamesPlayed = 1;
-        playerData.totalScore = score.value;
-        playerData.bestScore = score.value;
-        playerData.createdAt = now;
+        const newPlayerData = {
+          ...basePlayerData,
+          gamesPlayed: 1,
+          totalScore: score.value,
+          createdAt: timestamp,
+          registrationDate: timestamp,
+          platform: userData.value.telegramId ? 'telegram' : 'web'
+        };
         
-        // История рекордов для нового игрока
-        playerData.recordHistory = [{
-          score: score.value,
-          date: now,
-          isNewRecord: true
-        }];
+        // Добавляем историю рекорда если это новый рекорд
+        if (isNewRecord.value) {
+          newPlayerData.recordHistory = [{
+            score: score.value,
+            date: timestamp,
+            isNewRecord: true
+          }];
+        }
         
-        console.log('🆕 Создаем нового игрока в базе');
+        await playerRef.set(newPlayerData);
+        console.log('✅ Новый игрок создан в Firebase');
       }
       
-      console.log('👤 Сохраняем полные данные игрока в Firebase');
+      // Сохраняем запись об игре
+      const gameData = {
+        userId: userData.value.id,
+        score: score.value,
+        isNewRecord: isNewRecord.value,
+        timestamp: timestamp,
+        date: dateStr,
+        platform: userData.value.telegramId ? 'telegram' : 'web'
+      };
       
-      // Сохраняем с merge (обновляем существующие поля)
-      await playerRef.set(playerData, { merge: true });
-      console.log('✅ Игрок успешно сохранен в Firebase со всеми данными');
+      const gamesRef = db.collection('games');
+      await gamesRef.add(gameData);
+      console.log('✅ Игра сохранена в истории');
       
       saveMessage.value = 'Score saved to database! 🎮';
       saveSuccess.value = true;
-      console.log('🎉 Все данные (включая данные Telegram) сохранены успешно!');
       
     } catch (playerError) {
-      console.error('❌ Ошибка сохранения игрока:', playerError.code, playerError.message);
-      
-      if (playerError.code === 'permission-denied') {
-        saveMessage.value = 'Database permission error';
-        console.log('🔒 ОШИБКА: Нет прав на запись в Firestore!');
-      } else {
-        saveMessage.value = 'Database connection error';
-      }
+      console.error('❌ Ошибка сохранения игрока:', playerError);
+      saveMessage.value = 'Error saving to database';
       saveError.value = true;
-      return;
     }
     
   } catch (error) {
     console.error('❌ Общая ошибка сохранения:', error);
-    saveMessage.value = 'Error saving to database';
+    saveMessage.value = 'Connection error';
     saveError.value = true;
   }
+};
+
+// Повторная попытка сохранения
+const retrySave = async () => {
+  console.log('🔄 Повторная попытка сохранения...');
+  await saveToFirebase();
 };
 
 // Начало игры
@@ -502,6 +531,11 @@ const startGame = async () => {
       y: -60,
       speed: 4 + Math.random() * 4
     });
+    
+    // Ограничиваем количество предметов для производительности
+    if (items.value.length > 30) {
+      items.value.splice(0, 5);
+    }
   }, 600));
   
   // Игровой цикл
@@ -522,6 +556,16 @@ const startGame = async () => {
         
         score.value += item.value;
         if (score.value < 0) score.value = 0;
+        
+        // Эффект при сборе
+        const bucket = document.querySelector('.bucket');
+        if (bucket) {
+          bucket.style.transform = 'scale(1.1)';
+          setTimeout(() => {
+            bucket.style.transform = 'scale(1)';
+          }, 100);
+        }
+        
         return;
       }
       
@@ -585,6 +629,22 @@ const stopDrag = () => {
   isDragging.value = false;
 };
 
+// Обработка касаний для мобильных
+const handleTouchStart = (e) => {
+  if (gameOver.value) return;
+  e.preventDefault();
+  isDragging.value = true;
+  const touch = e.touches[0];
+  updateBucket(touch.clientX, touch.clientY);
+};
+
+const handleTouchMove = (e) => {
+  if (!isDragging.value || gameOver.value) return;
+  e.preventDefault();
+  const touch = e.touches[0];
+  updateBucket(touch.clientX, touch.clientY);
+};
+
 const updateBucket = (x, y) => {
   const width = window.innerWidth;
   const height = window.innerHeight;
@@ -608,9 +668,14 @@ onMounted(async () => {
   initUser();
   initGame();
   
-  // Инициализируем Firebase
-  const firebaseReady = initFirebase();
+  // Инициализируем Firebase (асинхронно)
+  const firebaseReady = await initFirebase();
   console.log('🔥 Firebase готов:', firebaseReady);
+  
+  // Если Firebase не готов, показываем сообщение
+  if (!firebaseReady) {
+    console.log('⚠️ Работаем в оффлайн режиме');
+  }
   
   // Добавляем обработчик ресайза
   window.addEventListener('resize', initGame);
@@ -626,7 +691,7 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* Стили без изменений */
+/* Стили оригинального дизайна */
 .game-container {
   width: 100%;
   height: 100%;
@@ -637,8 +702,8 @@ onUnmounted(() => {
   overflow: hidden;
   font-family: system-ui, -apple-system, sans-serif;
   user-select: none;
-  touch-action: none;
-  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  border-radius: 0;
 }
 
 .countdown {
@@ -703,7 +768,7 @@ onUnmounted(() => {
   margin-top: 50px;
 }
 
-.best-score {
+.best-score-display {
   position: absolute;
   top: 120px;
   left: 50%;
@@ -714,6 +779,7 @@ onUnmounted(() => {
   background: rgba(0, 0, 0, 0.5);
   padding: 4px 12px;
   border-radius: 12px;
+  display: block;
 }
 
 .user-info {
@@ -726,6 +792,7 @@ onUnmounted(() => {
   background: rgba(0, 0, 0, 0.5);
   padding: 4px 10px;
   border-radius: 12px;
+  display: block;
   display: none;
 }
 
@@ -845,7 +912,7 @@ onUnmounted(() => {
   border-radius: 10px;
   font-size: 14px;
   background: rgba(255, 255, 255, 0.1);
-  display: none;
+  display: block;
 }
 
 .save-status.success {
@@ -857,7 +924,6 @@ onUnmounted(() => {
 .save-status.error {
   background: rgba(255, 0, 0, 0.2);
   color: #ff6b6b;
-  display: none;
 }
 
 .game-over button {
@@ -880,6 +946,11 @@ onUnmounted(() => {
 
 .game-over button:active {
   transform: scale(0.95);
+}
+
+.retry-btn {
+  background: linear-gradient(to right, #0066ff, #00ccff) !important;
+  margin-top: 10px !important;
 }
 
 @keyframes pulse {
@@ -933,16 +1004,24 @@ onUnmounted(() => {
   .final-score { font-size: 28px; }
   .best-record { font-size: 20px; }
   .new-record { font-size: 24px; }
-  .game-over button { padding: 12px 28px; font-size: 16px; }
+  .game-over button { 
+    padding: 12px 28px; 
+    font-size: 16px; 
+    min-width: 200px;
+  }
+  .retry-btn {
+    min-width: 200px;
+  }
   .user-info {
     font-size: 12px;
     top: 5px;
     right: 10px;
     padding: 3px 8px;
   }
-  .best-score {
+  .best-score-display {
     font-size: 12px;
     padding: 3px 10px;
+    top: 110px;
   }
 }
 </style>
