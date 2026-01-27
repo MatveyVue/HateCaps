@@ -118,6 +118,12 @@
         <img style="position: absolute; margin-left: -18px;" src="https://github.com/MatveyVue/icopn/blob/main/LeaderBoard.png?raw=true" width="40px"></img>
         <p style="margin-top: 40px; color: white;">Top</p>
     </button>
+<RouterLink to="/games">
+    <button class="game" @click="triggerMediumHaptic">
+        <img style="position: absolute; margin-left: -23px; margin-top: -4px;" src="https://github.com/MatveyVue/icopn/blob/main/Game.PNG?raw=true" width="45px"></img>
+        <p style="margin-top: 40px;">Game</p>
+    </button>
+</RouterLink>
 </RouterLink>
     <button class="profile" @click="triggerMediumHaptic">
         <img style="position: absolute; margin-left: -18px;" src="https://github.com/MatveyVue/icopn/blob/main/ProfileActive.png?raw=true" width="35px"></img>
