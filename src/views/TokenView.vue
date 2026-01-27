@@ -44,7 +44,7 @@
 
 
 <div v-if="topHolders.length > 2" :style="{ 'text-align': 'center', 'margin-top': '30px' }">
-    <img style="border-radius: 50%;" src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/Rstm.jpg?raw=true" width="90px" alt="Holder Image">
+    <img style="border-radius: 50%;" src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/holders.jpg?raw=true" width="90px" alt="Holder Image">
     <div style="margin-left: 9vw; margin-top: -25px;" class="top-3">3</div>
 <div style="margin-top: 3px;">
     <a :href="'https://tonviewer.com/address/' + topHolders[2].owner.address" target="_blank" rel="noopener noreferrer">
@@ -69,6 +69,18 @@
       <img src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/Webby.jpg?raw=true" width="45px" alt="Holder Avatar" style="border-radius: 50%; margin-left: 5px;">
       <div>
         <a :href="'https://tonviewer.com/address/' + topHolders[3].owner.address" target="_blank" rel="noopener noreferrer">
+          <b><p style="margin-left: 10px;" class="wallet">{{ shortenAddress(topHolders[3].owner.address) }}</p></b>
+        </a>
+        <p style="float: right; margin-left: 62vw;" class="tokens-wallet">{{ formatBalance(topHolders[3].balance) }}</p>
+      </div>
+    </div>
+</div>
+
+<div>
+    <div class="border-wallet" v-if="topHolders.length > 4" style="display: flex; align-items: center; gap: 10px;">
+      <img src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/Rstm.jpg?raw=true" width="45px" alt="Holder Avatar" style="border-radius: 50%; margin-left: 5px;">
+      <div>
+        <a :href="'https://tonviewer.com/address/' + topHolders[4].owner.address" target="_blank" rel="noopener noreferrer">
           <b><p style="margin-left: 10px;" class="wallet">{{ shortenAddress(topHolders[3].owner.address) }}</p></b>
         </a>
         <p style="float: right; margin-left: 62vw;" class="tokens-wallet">{{ formatBalance(topHolders[3].balance) }}</p>
