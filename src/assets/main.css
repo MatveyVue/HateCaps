@@ -276,8 +276,7 @@ a {
   border-radius: 25px;
   width: 100%;
   height: auto;
-  min-height: 120px; /* Минимальная высота больше */
-  max-height: 285px; /* Максимальная высота больше */
+  height: 70vw;
   padding: 25px 20px; /* Внутренние отступы */
   margin-bottom: 20px; /* Внешний отступ снизу */
   overflow: hidden; /* Скрываем переполнение */
@@ -287,7 +286,7 @@ a {
 .name-game {
   color: #ffffff;
   font-size: 22px;
-  margin-left: -70%;
+  margin-left: -75%;
   margin-top: 10px;
 }
 
