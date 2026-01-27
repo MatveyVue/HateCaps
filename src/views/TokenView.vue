@@ -66,7 +66,7 @@
 
 <div>
     <div class="border-wallet" v-if="topHolders.length > 3" style="display: flex; align-items: center; gap: 10px;">
-      <img src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/Webby.jpg?raw=true" width="45px" alt="Holder Avatar" style="border-radius: 50%; margin-left: 5px;">
+      <img src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/Rstm.jpg?raw=true" width="45px" alt="Holder Avatar" style="border-radius: 50%; margin-left: 5px;">
       <div>
         <a :href="'https://tonviewer.com/address/' + topHolders[3].owner.address" target="_blank" rel="noopener noreferrer">
           <b><p style="margin-left: 10px;" class="wallet">{{ shortenAddress(topHolders[3].owner.address) }}</p></b>
@@ -78,7 +78,7 @@
 
 <div>
     <div class="border-wallet" v-if="topHolders.length > 4" style="display: flex; align-items: center; gap: 10px;">
-      <img src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/Rstm.jpg?raw=true" width="45px" alt="Holder Avatar" style="border-radius: 50%; margin-left: 5px;">
+      <img src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/Webby.jpg?raw=true" width="45px" alt="Holder Avatar" style="border-radius: 50%; margin-left: 5px;">
       <div>
         <a :href="'https://tonviewer.com/address/' + topHolders[4].owner.address" target="_blank" rel="noopener noreferrer">
           <b><p style="margin-left: 10px;" class="wallet">{{ shortenAddress(topHolders[4].owner.address) }}</p></b>
