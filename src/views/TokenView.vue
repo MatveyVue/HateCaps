@@ -167,8 +167,8 @@ export default {
         1: 'https://github.com/MatveyVue/Profiles-Telegram/blob/main/Scrooge.jpg?raw=true',
         2: 'https://github.com/MatveyVue/Profiles-Telegram/blob/main/StonFi.png?raw=true',
         3: 'https://github.com/MatveyVue/Profiles-Telegram/blob/main/holders.jpg?raw=true',
-        4: 'https://github.com/MatveyVue/Profiles-Telegram/blob/main/Webby.jpg?raw=true',
-        5: 'https://github.com/MatveyVue/Profiles-Telegram/blob/main/Rstm.jpg?raw=true',
+        4: 'https://github.com/MatveyVue/Profiles-Telegram/blob/main/Rstm.jpg?raw=true',
+        5: 'https://github.com/MatveyVue/Profiles-Telegram/blob/main/Webby.jpg?raw=true',
       }
     }
   },
