@@ -9,8 +9,8 @@
 <center>
     <img style="border-radius: 20px; margin-top: -14px; margin-left: -10px;" src="https://github.com/MatveyVue/icopn/blob/main/Bombies.jpeg?raw=true" width="106%">
     <p class="name-game">Bombies</p><br>
-    <a href="">
-        <button class="play-game">Play</button>
+    <a href="https://t.me/HateCapsBot/Game">
+        <button style="color: black;" class="play-game">Play</button>
     </a>
 </center>
 </div>
@@ -49,4 +49,19 @@ import { ref, onBeforeUnmount, onMounted, watch } from 'vue'
 
 defineOptions({ name: 'game' });
 
+const isLoading = ref(true);
+
+onMounted(() => {
+    isLoading.value = true;
+});
+
+window.addEventListener('load', function() {
+});
+
+setTimeout(function() {
+    const preloader = document.getElementById('preloader');
+    if (preloader) { // Проверяем, существует ли элемент
+        preloader.classList.add('hidden'); // Добавляем класс для скрытия
+    }
+}, 5000);
 </script>
