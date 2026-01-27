@@ -546,7 +546,7 @@ const startGame = async () => {
     const updatedItems = [];
     
     items.value.forEach(item => {
-      item.y += item.speed * 1.3;
+      item.y += item.speed * 1.2;
       
       // Проверка столкновения
       if (item.y + 60 > bucketPosition.value.y && 
