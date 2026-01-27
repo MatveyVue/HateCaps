@@ -23,7 +23,7 @@
     <center>
       <div v-if="topPlayers.length > 0" class="stars-top1 player-container">
           <img :src="topPlayers[0].photo" alt="Фото" style="width: 100px; height: 100px; margin-top: 5px;" class="user-photo">
-          <div style="margin-left: -6px; margin-top: 95px;" class="top1">1</div>
+          <div style="margin-left: 1px; margin-top: 95px;" class="top1">1</div>
         <a :href="topPlayers[0].link || '#'">
           <b><p style="margin-top: -30px; margin-left: -5px; font-size: 18px;">{{ topPlayers[0].user ? topPlayers[0].user : 'Нет данных' }}<img style="margin-top: 2px; position: absolute;" :src="topPlayers[0].cap" width="20px"></img></p></b><br>
         </a>
@@ -43,7 +43,7 @@
 
 <div style="margin-top: -20px;" class="banner">
     <a href="https://t.me/+x4-ZMCjs8y0zNDQ0">
-        <img class="banner" src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/IMG_8907.jpeg?raw=true"></img>
+        <img class="banner" src="https://github.com/MatveyVue/icopn/blob/main/Banner.jpg?raw=true"></img>
     </a>
 </div>
 <p style="color: rgb(20, 20, 20); font-size: 5px;">.</p>
@@ -75,6 +75,12 @@
         <img style="position: absolute; margin-left: -18px;" src="https://github.com/MatveyVue/icopn/blob/main/LeaderActive.png?raw=true" width="40px"></img>
         <p style="margin-top: 40px;">Top</p>
     </button>
+<RouterLink to="/games">
+    <button class="game" @click="triggerMediumHaptic">
+        <img style="position: absolute; margin-left: -23px; margin-top: -4px;" src="https://github.com/MatveyVue/icopn/blob/main/Game.PNG?raw=true" width="45px"></img>
+        <p style="margin-top: 40px;">Game</p>
+    </button>
+</RouterLink>
 <RouterLink to="/profile">
     <button class="profile" @click="triggerMediumHaptic">
         <img style="position: absolute; margin-left: -18px;" src="https://github.com/MatveyVue/icopn/blob/main/Profile.png?raw=true" width="35px"></img>
