@@ -9,9 +9,9 @@
 <center>
     <img style="border-radius: 20px; margin-top: -14px; margin-left: -10px;" src="https://github.com/MatveyVue/icopn/blob/main/Bombies.jpeg?raw=true" width="106%">
     <p class="name-game">Bombies</p><br>
-    <a href="https://t.me/HateCapsBot/Game">
+    <RouterLink to="game">
         <button style="color: black;" class="play-game">Play</button>
-    </a>
+    </RouterLink>
 </center>
 </div>
 
