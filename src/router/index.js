@@ -26,6 +26,21 @@ const router = createRouter({
       component: () => import('../views/TokenView.vue'),
     },
     {
+      path: '/games',
+      name: 'games',
+      component: () => import('../views/GameView.vue'),
+    },
+    {
+      path: '/game',
+      name: 'game',
+      component: () => import('../views/Game.vue'),
+    },
+    {
+      path: '/test',
+      name: 'test',
+      component: () => import('../views/TestView.vue'),
+    },
+    {
       path: '/jollychimp',
       name: 'jollychimp',
       component: GiftCollectionView,
