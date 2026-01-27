@@ -161,11 +161,11 @@ export default {
   computed: {
     // первые 3 кошелька
     topHolders() {
-      return this.holders.slice(0, 4);
+      return this.holders.slice(0, 5);
     },
     // остальные
     otherHolders() {
-      return this.holders.slice(4);
+      return this.holders.slice(5);
     }
   },
   created() {
