@@ -157,18 +157,18 @@ export default {
         '0:d36f5c354c2a2116a9cd7323ebadb6c1250740c303e7f036c2a1a4947744b94f': 'https://github.com/MatveyVue/Profiles-Telegram/blob/main/StonFi.png?raw=true',        
         
         // Адрес для 4-го места (Webby)
-        '0:5e4ef4483c6b31fe169ee265f31b8ce676bf4980f7ac3cf29d4c227d66a3e26a': 'https://github.com/MatveyVue/Profiles-Telegram/blob/main/Webby.jpg?raw=true',
+        '0:5e4ef4483c6b31fe169ee265f31b8ce676bf4980f7ac3cf29d4c227d66a3e26a': 'https://github.com/MatveyVue/Profiles-Telegram/blob/main/Rstm.jpg?raw=true',
         
         // Адрес для 5-го места (специальная аватарка)
-        '0:027749cd26265ca584c6ac7f7fce9ebfb1449556a88122865eebd68af8b2d0ce': 'https://github.com/MatveyVue/Profiles-Telegram/blob/main/Rstm.jpg?raw=true',
+        '0:027749cd26265ca584c6ac7f7fce9ebfb1449556a88122865eebd68af8b2d0ce': 'https://github.com/MatveyVue/Profiles-Telegram/blob/main/Webby.jpg?raw=true',
       },
       // Добавляем positionAvatars, так как на него есть ссылка в getAvatar
       positionAvatars: {
         1: 'https://github.com/MatveyVue/Profiles-Telegram/blob/main/Scrooge.jpg?raw=true',
         2: 'https://github.com/MatveyVue/Profiles-Telegram/blob/main/StonFi.png?raw=true',
         3: 'https://github.com/MatveyVue/Profiles-Telegram/blob/main/holders.jpg?raw=true',
-        4: 'https://github.com/MatveyVue/Profiles-Telegram/blob/main/Rstm.jpg?raw=true',
-        5: 'https://github.com/MatveyVue/Profiles-Telegram/blob/main/Webby.jpg?raw=true',
+        4: 'https://github.com/MatveyVue/Profiles-Telegram/blob/main/Webby.jpg?raw=true',
+        5: 'https://github.com/MatveyVue/Profiles-Telegram/blob/main/Rstm.jpg?raw=true',
       }
     }
   },
