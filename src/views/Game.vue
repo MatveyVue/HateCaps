@@ -66,7 +66,9 @@
         <p class="new-record" v-if="isNewRecord && score > 0">🎉 NEW RECORD!</p>
         <div class="win-buttons">
           <button @click="playAgain" class="play-again-btn">🔄 PLAY AGAIN</button>
-          <button @click="goToMenu" class="back-btn">⬅️ BACK TO MENU</button>
+          <RouterLink to="/games">
+            <button class="back-btn">⬅️ BACK TO MENU</button>
+          </RouterLink>
         </div>
       </center>
     </div>
@@ -85,7 +87,9 @@
         </div>
         <div class="game-over-buttons">
           <button @click="playAgain" class="play-again-btn">🔄 PLAY AGAIN</button>
-          <button @click="goToMenu" class="back-btn">⬅️ BACK TO MENU</button>
+          <RouterLink to="/games">
+            <button class="back-btn">⬅️ BACK TO MENU</button>
+          </RouterLink>
         </div>
         <button v-if="!firebaseInitialized && saveError" @click="retrySave" class="retry-btn">
           🔄 Retry Save
@@ -97,6 +101,9 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 // Firebase конфигурация
 const firebaseConfig = {
@@ -118,9 +125,6 @@ let firebaseInitialized = ref(false);
 const bombCaught = ref(false);
 const showWinScreen = ref(false);
 const showLoseScreen = ref(false);
-
-// Переменная для Telegram WebApp
-const tg = ref(null);
 
 // Динамическая загрузка Firebase
 const loadFirebase = () => {
@@ -248,36 +252,18 @@ const itemTypes = [
 // Компьютед
 const timePercent = computed(() => (time.value / 30) * 50);
 
-// Инициализация Telegram WebApp
-const initTelegramWebApp = () => {
-  console.log('🤖 Проверяем Telegram WebApp...');
+// Инициализация пользователя
+const initUser = () => {
+  console.log('👤 Инициализация пользователя...');
   
-  // Проверяем наличие Telegram WebApp
-  if (window.Telegram && window.Telegram.WebApp) {
-    tg.value = window.Telegram.WebApp;
-    console.log('✅ Telegram WebApp обнаружен');
+  // Проверяем Telegram WebApp
+  const tg = window.Telegram?.WebApp;
+  if (tg) {
+    console.log('📱 Telegram WebApp обнаружен');
+    tg.ready();
+    tg.expand();
     
-    // Инициализируем WebApp
-    tg.value.ready();
-    
-    // Раскрываем на весь экран
-    tg.value.expand();
-    
-    // Устанавливаем тему
-    tg.value.setHeaderColor('#000000');
-    tg.value.setBackgroundColor('#000000');
-    
-    // Скрываем кнопку "Назад" в Telegram
-    tg.value.BackButton.hide();
-    
-    // Отключаем контекстное меню
-    document.addEventListener('contextmenu', (e) => {
-      e.preventDefault();
-      return false;
-    });
-    
-    // Получаем данные пользователя
-    const user = tg.value.initDataUnsafe?.user;
+    const user = tg.initDataUnsafe?.user;
     console.log('👤 Данные Telegram user:', user);
     
     if (user) {
@@ -294,37 +280,20 @@ const initTelegramWebApp = () => {
         telegramUsername: user.username || '',
         telegramFirstName: user.first_name || '',
         telegramLastName: user.last_name || '',
-        displayName: user.username || user.first_name || 'Player',
-        isTelegram: true
+        displayName: user.username || user.first_name || 'Player'
       };
-      console.log('✅ Telegram пользователь инициализирован:', userData.value);
+      console.log('✅ Telegram пользователь:', userData.value);
     } else {
       // Telegram без пользователя
       userData.value = {
         id: `tg_guest_${Date.now()}`,
         username: 'TelegramGuest',
         firstName: 'Guest',
-        displayName: 'Guest',
-        isTelegram: true
+        displayName: 'Guest'
       };
       console.log('👤 Telegram без данных пользователя');
     }
-    
-    return true;
-  }
-  
-  console.log('🌐 Telegram WebApp не обнаружен, работаем в веб-режиме');
-  return false;
-};
-
-// Инициализация пользователя
-const initUser = () => {
-  console.log('👤 Инициализация пользователя...');
-  
-  // Сначала пытаемся инициализировать Telegram WebApp
-  const telegramReady = initTelegramWebApp();
-  
-  if (!telegramReady) {
+  } else {
     // Веб-пользователь
     let userId = localStorage.getItem('web_user_id');
     if (!userId) {
@@ -771,17 +740,10 @@ const playAgain = () => {
   setTimeout(startCountdown, 500);
 };
 
-// Вернуться в меню (используем Telegram метод закрытия если доступен)
+// Вернуться в меню
 const goToMenu = () => {
   clearAllTimers();
-  
-  if (tg.value && tg.value.close) {
-    // В Telegram - закрываем мини-приложение
-    tg.value.close();
-  } else {
-    // В веб-режиме - перезагружаем страницу или показываем сообщение
-    window.location.reload();
-  }
+  router.push('/games');
 };
 
 // Управление ведром
@@ -1418,60 +1380,4 @@ onUnmounted(() => {
     height: -webkit-fill-available;
   }
 }
-
-/* Фикс для Telegram WebApp */
-@media (max-width: 640px) {
-  .game-container {
-    height: 100vh;
-    max-height: -webkit-fill-available;
-  }
-  
-  /* Скрываем scrollbars в Telegram */
-  body {
-    overflow: hidden !important;
-  }
-  
-  /* Улучшаем отзывчивость на касания */
-  .bucket {
-    width: 70px;
-    height: 70px;
-  }
-  
-  /* Улучшаем видимость предметов */
-  .item {
-    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3));
-  }
-}
 </style>
-
-<!-- Telegram WebApp Script -->
-<script>
-// Этот скрипт загружается автоматически в Telegram
-(function() {
-  // Проверяем, находимся ли мы в Telegram WebApp
-  if (window.Telegram && window.Telegram.WebApp) {
-    const tg = window.Telegram.WebApp;
-    
-    // Инициализация WebApp
-    tg.ready();
-    
-    // Раскрываем на весь экран
-    tg.expand();
-    
-    // Устанавливаем цвета
-    tg.setHeaderColor('#000000');
-    tg.setBackgroundColor('#000000');
-    
-    // Скрываем кнопку "Назад"
-    tg.BackButton.hide();
-    
-    // Отключаем контекстное меню
-    document.addEventListener('contextmenu', function(e) {
-      e.preventDefault();
-      return false;
-    });
-    
-    console.log('Telegram WebApp инициализирован в полном экране');
-  }
-})();
-</script>
