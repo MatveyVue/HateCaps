@@ -36,8 +36,15 @@
         v-for="item in items" 
         :key="item.id"
         class="item"
-        :class="item.type"
-        :style="{ left: item.x + 'px', top: item.y + 'px' }"
+        :class="[item.type, { caught: item.caught }]"
+        :style="{ 
+          left: item.x + 'px', 
+          top: item.y + 'px',
+          width: item.size + 'px',
+          height: item.size + 'px',
+          fontSize: item.fontSize + 'px',
+          lineHeight: item.size + 'px'
+        }"
       >
         {{ item.icon }}
       </div>
@@ -50,24 +57,53 @@
       </div>
     </div>
     
-    <div v-if="gameOver" class="game-over">
-      <h2>GAME OVER</h2>
-      <p class="final-score">Score: {{ score }}</p>
-      <p class="best-record" v-if="bestScore > 0">Best: {{ bestScore }}</p>
-      <p class="new-record" v-if="isNewRecord && score > 0">🎉 NEW RECORD!</p>
-      <div class="save-status" :class="{ success: saveSuccess, error: saveError }">
-        {{ saveMessage }}
-      </div>
-      <button @click="restartGame">PLAY AGAIN</button>
-      <button v-if="!firebaseInitialized && saveError" @click="retrySave" class="retry-btn">
-        🔄 Retry Save
-      </button>
+    <!-- Меню выигрыша -->
+    <div v-if="showWinScreen" class="win-screen">
+      <center>
+        <h2>🎉 YOU WIN!</h2>
+        <p class="final-score">Final Score: {{ score }}</p>
+        <p class="best-record" v-if="bestScore > 0">Best: {{ bestScore }}</p>
+        <p class="new-record" v-if="isNewRecord && score > 0">🎉 NEW RECORD!</p>
+        <div class="win-buttons">
+          <button @click="playAgain" class="play-again-btn">🔄 PLAY AGAIN</button>
+          <RouterLink to="/games">
+            <button class="back-btn">⬅️ BACK TO MENU</button>
+          </RouterLink>
+        </div>
+      </center>
+    </div>
+    
+    <!-- Меню проигрыша -->
+    <div v-if="showLoseScreen" class="game-over">
+      <center>
+        <h2 v-if="bombCaught">💥 BOOM!</h2>
+        <h2 v-else>TIME'S UP!</h2>
+        <p class="final-score">Score: {{ score }}</p>
+        <p class="bomb-message" v-if="bombCaught">You caught a bomb!</p>
+        <p class="best-record" v-if="bestScore > 0">Best: {{ bestScore }}</p>
+        <p class="new-record" v-if="isNewRecord && score > 0">🎉 NEW RECORD!</p>
+        <div style="display: none" class="save-status" :class="{ success: saveSuccess, error: saveError }">
+          {{ saveMessage }}
+        </div>
+        <div class="game-over-buttons">
+          <button @click="playAgain" class="play-again-btn">🔄 PLAY AGAIN</button>
+          <RouterLink to="/games">
+            <button class="back-btn">⬅️ BACK TO MENU</button>
+          </RouterLink>
+        </div>
+        <button v-if="!firebaseInitialized && saveError" @click="retrySave" class="retry-btn">
+          🔄 Retry Save
+        </button>
+      </center>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 // Firebase конфигурация
 const firebaseConfig = {
@@ -84,6 +120,11 @@ const firebaseConfig = {
 // Firebase переменные
 let db = null;
 let firebaseInitialized = ref(false);
+
+// Добавляем переменные для отслеживания состояния
+const bombCaught = ref(false);
+const showWinScreen = ref(false);
+const showLoseScreen = ref(false);
 
 // Динамическая загрузка Firebase
 const loadFirebase = () => {
@@ -175,7 +216,6 @@ const initFirebase = async () => {
 const time = ref(30);
 const score = ref(0);
 const bestScore = ref(0);
-const gameOver = ref(false);
 const isNewRecord = ref(false);
 const showCountdown = ref(true);
 const countdown = ref(3);
@@ -204,9 +244,9 @@ const userData = ref({
 
 // Предметы
 const itemTypes = [
-  { type: 'apple', icon: '🍎', value: 10 },
-  { type: 'star', icon: '⭐', value: 20 },
-  { type: 'bomb', icon: '💣', value: -30 }
+  { type: 'apple', icon: '🍎', value: 10, size: 70, fontSize: 45 },
+  { type: 'star', icon: '⭐', value: 20, size: 65, fontSize: 40 },
+  { type: 'bomb', icon: '💣', value: -1000, size: 75, fontSize: 50 }
 ];
 
 // Компьютед
@@ -292,6 +332,12 @@ const initGame = () => {
 // Таймеры
 let timers = [];
 
+// Очистка таймеров
+const clearAllTimers = () => {
+  timers.forEach(timer => clearInterval(timer));
+  timers = [];
+};
+
 // Обратный отсчет
 const startCountdown = () => {
   const timer = setInterval(() => {
@@ -347,19 +393,20 @@ const saveToFirebase = async () => {
   console.log('👤 Пользователь:', userData.value.id);
   console.log('🎯 Счет:', score.value);
   console.log('🏆 Новый рекорд?', isNewRecord.value);
+  console.log('💣 Бомба поймана?', bombCaught.value);
+  console.log('🎉 Выиграл?', showWinScreen.value);
   
   saveMessage.value = 'Saving...';
   saveSuccess.value = false;
   saveError.value = false;
   
-  // Всегда сохраняем в localStorage
+  // Всегда сохраняем лучший счет в localStorage
   localStorage.setItem(`best_score_${userData.value.id}`, bestScore.value.toString());
   console.log('📁 Сохранено в localStorage');
   
   // Проверяем Firebase
   if (!firebaseInitialized.value || !db) {
     console.log('❌ Firebase не готов, только локальное сохранение');
-    saveMessage.value = 'Score saved locally! 🎮';
     saveSuccess.value = true;
     return;
   }
@@ -378,7 +425,9 @@ const saveToFirebase = async () => {
       isTelegram: !!userData.value.telegramId,
       lastUpdated: timestamp,
       bestScore: bestScore.value,
-      lastScore: score.value
+      lastScore: score.value,
+      caughtBomb: bombCaught.value,
+      wonGame: showWinScreen.value
     };
     
     // Добавляем Telegram данные если есть
@@ -455,6 +504,9 @@ const saveToFirebase = async () => {
         userId: userData.value.id,
         score: score.value,
         isNewRecord: isNewRecord.value,
+        caughtBomb: bombCaught.value,
+        wonGame: showWinScreen.value,
+        timeLeft: time.value,
         timestamp: timestamp,
         date: dateStr,
         platform: userData.value.telegramId ? 'telegram' : 'web'
@@ -464,18 +516,15 @@ const saveToFirebase = async () => {
       await gamesRef.add(gameData);
       console.log('✅ Игра сохранена в истории');
       
-      saveMessage.value = 'Score saved to database! 🎮';
       saveSuccess.value = true;
       
     } catch (playerError) {
       console.error('❌ Ошибка сохранения игрока:', playerError);
-      saveMessage.value = 'Error saving to database';
       saveError.value = true;
     }
     
   } catch (error) {
     console.error('❌ Общая ошибка сохранения:', error);
-    saveMessage.value = 'Connection error';
     saveError.value = true;
   }
 };
@@ -486,13 +535,53 @@ const retrySave = async () => {
   await saveToFirebase();
 };
 
+// Генерация предмета
+const generateItem = () => {
+  const type = itemTypes[Math.floor(Math.random() * itemTypes.length)];
+  const width = window.innerWidth;
+  
+  return {
+    id: Date.now() + Math.random(),
+    type: type.type,
+    icon: type.icon,
+    value: type.value,
+    size: type.size,
+    fontSize: type.fontSize,
+    x: Math.random() * (width - type.size),
+    y: -type.size,
+    speed: 4 + Math.random() * 4,
+    caught: false
+  };
+};
+
+// Проверка коллизии
+const checkCollision = (item, bucket) => {
+  const itemCenterX = item.x + item.size / 2;
+  const itemCenterY = item.y + item.size / 2;
+  const bucketCenterX = bucket.x + 40;
+  const bucketCenterY = bucket.y + 40;
+  
+  // Расстояние между центрами
+  const distance = Math.sqrt(
+    Math.pow(itemCenterX - bucketCenterX, 2) + 
+    Math.pow(itemCenterY - bucketCenterY, 2)
+  );
+  
+  const itemRadius = item.size * 0.35;
+  const bucketRadius = 35;
+  
+  return distance < (itemRadius + bucketRadius);
+};
+
 // Начало игры
 const startGame = async () => {
   console.log('🎮 Начало игры...');
   
   time.value = 30;
   score.value = 0;
-  gameOver.value = false;
+  showWinScreen.value = false;
+  showLoseScreen.value = false;
+  bombCaught.value = false;
   isNewRecord.value = false;
   saveMessage.value = '';
   saveSuccess.value = false;
@@ -512,59 +601,79 @@ const startGame = async () => {
   // Таймер игры
   timers.push(setInterval(() => {
     time.value--;
-    if (time.value <= 0) endGame();
+    if (time.value <= 0) endGameWithWin();
   }, 1000));
   
   // Генерация предметов
   timers.push(setInterval(() => {
-    if (gameOver.value) return;
+    if (showWinScreen.value || showLoseScreen.value) return;
     
-    const type = itemTypes[Math.floor(Math.random() * itemTypes.length)];
-    const width = window.innerWidth;
+    items.value.push(generateItem());
     
-    items.value.push({
-      id: Date.now() + Math.random(),
-      type: type.type,
-      icon: type.icon,
-      value: type.value,
-      x: Math.random() * (width - 60),
-      y: -60,
-      speed: 4 + Math.random() * 4
-    });
-    
-    // Ограничиваем количество предметов для производительности
-    if (items.value.length > 30) {
-      items.value.splice(0, 5);
+    // Ограничиваем количество предметов
+    if (items.value.length > 25) {
+      items.value.splice(0, 3);
     }
-  }, 600));
+  }, 800));
   
   // Игровой цикл
   timers.push(setInterval(() => {
-    if (gameOver.value) return;
+    if (showWinScreen.value || showLoseScreen.value) return;
     
     const screenHeight = window.innerHeight;
     const updatedItems = [];
     
     items.value.forEach(item => {
-      item.y += item.speed * 1.2;
+      item.y += item.speed * 1.3;
       
       // Проверка столкновения
-      if (item.y + 60 > bucketPosition.value.y && 
-          item.y < bucketPosition.value.y + 80 &&
-          item.x + 60 > bucketPosition.value.x && 
-          item.x < bucketPosition.value.x + 80) {
+      if (checkCollision(item, bucketPosition.value)) {
+        item.caught = true;
         
-        score.value += item.value;
-        if (score.value < 0) score.value = 0;
-        
-        // Эффект при сборе
-        const bucket = document.querySelector('.bucket');
-        if (bucket) {
-          bucket.style.transform = 'scale(1.1)';
+        // Если это бомба - мгновенный проигрыш
+        if (item.type === 'bomb') {
+          bombCaught.value = true;
+          score.value = Math.max(0, score.value + item.value);
+          
+          // Эффект взрыва
+          const bucket = document.querySelector('.bucket');
+          if (bucket) {
+            bucket.style.transform = 'scale(1.3)';
+            bucket.style.filter = 'drop-shadow(0 0 30px rgba(255, 0, 0, 0.8))';
+            setTimeout(() => {
+              bucket.style.transform = 'scale(1)';
+              bucket.style.filter = 'drop-shadow(0 4px 12px rgba(255, 165, 0, 0.6))';
+            }, 300);
+          }
+          
+          // Завершаем игру
           setTimeout(() => {
-            bucket.style.transform = 'scale(1)';
-          }, 100);
+            endGameWithLoss();
+          }, 500);
+          
+          return;
+        } else {
+          // Обычные предметы
+          score.value += item.value;
+          if (score.value < 0) score.value = 0;
+          
+          // Эффект при сборе
+          const bucket = document.querySelector('.bucket');
+          if (bucket) {
+            bucket.style.transform = 'scale(1.15)';
+            setTimeout(() => {
+              bucket.style.transform = 'scale(1)';
+            }, 100);
+          }
         }
+        
+        // Удаляем предмет после задержки
+        setTimeout(() => {
+          const index = items.value.findIndex(i => i.id === item.id);
+          if (index > -1) {
+            items.value.splice(index, 1);
+          }
+        }, 150);
         
         return;
       }
@@ -576,14 +685,12 @@ const startGame = async () => {
   }, 16));
 };
 
-// Конец игры
-const endGame = async () => {
-  console.log('⏹️ Игра окончена. Счет:', score.value);
-  console.log('📊 Текущий лучший счет:', bestScore.value);
+// Конец игры с выигрышем
+const endGameWithWin = async () => {
+  console.log('🎉 Выигрыш! Время истекло. Счет:', score.value);
   
-  gameOver.value = true;
-  timers.forEach(timer => clearInterval(timer));
-  timers = [];
+  clearAllTimers();
+  showWinScreen.value = true;
   
   // Проверяем новый рекорд
   if (score.value > bestScore.value) {
@@ -593,17 +700,37 @@ const endGame = async () => {
   }
   
   console.log('📊 Новый лучший счет:', bestScore.value);
-  console.log('💾 Начинаем сохранение...');
   
   // Сохраняем
   await saveToFirebase();
 };
 
-// Перезапуск
-const restartGame = () => {
-  timers.forEach(timer => clearInterval(timer));
-  timers = [];
-  gameOver.value = false;
+// Конец игры с проигрышем
+const endGameWithLoss = async () => {
+  console.log('⏹️ Игра окончена (проигрыш). Счет:', score.value);
+  
+  clearAllTimers();
+  showLoseScreen.value = true;
+  
+  // Проверяем новый рекорд только если не поймали бомбу
+  if (!bombCaught.value && score.value > bestScore.value) {
+    console.log('🏆 НОВЫЙ РЕКОРД!');
+    isNewRecord.value = true;
+    bestScore.value = score.value;
+  }
+  
+  console.log('📊 Новый лучший счет:', bestScore.value);
+  
+  // Сохраняем
+  await saveToFirebase();
+};
+
+// Играть снова
+const playAgain = () => {
+  clearAllTimers();
+  showWinScreen.value = false;
+  showLoseScreen.value = false;
+  bombCaught.value = false;
   items.value = [];
   countdown.value = 3;
   showCountdown.value = true;
@@ -613,15 +740,21 @@ const restartGame = () => {
   setTimeout(startCountdown, 500);
 };
 
+// Вернуться в меню
+const goToMenu = () => {
+  clearAllTimers();
+  router.push('/games');
+};
+
 // Управление ведром
 const startDrag = (e) => {
-  if (gameOver.value) return;
+  if (showWinScreen.value || showLoseScreen.value) return;
   isDragging.value = true;
   updateBucket(e.clientX, e.clientY);
 };
 
 const moveDrag = (e) => {
-  if (!isDragging.value || gameOver.value) return;
+  if (!isDragging.value || showWinScreen.value || showLoseScreen.value) return;
   updateBucket(e.clientX, e.clientY);
 };
 
@@ -631,7 +764,7 @@ const stopDrag = () => {
 
 // Обработка касаний для мобильных
 const handleTouchStart = (e) => {
-  if (gameOver.value) return;
+  if (showWinScreen.value || showLoseScreen.value) return;
   e.preventDefault();
   isDragging.value = true;
   const touch = e.touches[0];
@@ -639,7 +772,7 @@ const handleTouchStart = (e) => {
 };
 
 const handleTouchMove = (e) => {
-  if (!isDragging.value || gameOver.value) return;
+  if (!isDragging.value || showWinScreen.value || showLoseScreen.value) return;
   e.preventDefault();
   const touch = e.touches[0];
   updateBucket(touch.clientX, touch.clientY);
@@ -685,33 +818,37 @@ onMounted(async () => {
 });
 
 onUnmounted(() => {
-  timers.forEach(timer => clearInterval(timer));
+  clearAllTimers();
   window.removeEventListener('resize', initGame);
 });
 </script>
 
 <style scoped>
-/* Стили оригинального дизайна */
+/* Исправленные стили для выравнивания */
 .game-container {
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   background: #000;
   position: fixed;
   top: 0;
   left: 0;
+  right: 0;
+  bottom: 0;
   overflow: hidden;
   font-family: system-ui, -apple-system, sans-serif;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
-  border-radius: 0;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 .countdown {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   background: rgba(0, 0, 0, 0.9);
   display: flex;
   align-items: center;
@@ -731,10 +868,11 @@ onUnmounted(() => {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
+  width: 100vw;
   padding: 20px 12px 8px;
   z-index: 100;
   pointer-events: none;
+  box-sizing: border-box;
 }
 
 .stats {
@@ -764,8 +902,6 @@ onUnmounted(() => {
   font-weight: bold;
   color: #ffffff;
   text-shadow: 0 0 15px rgba(100, 255, 100, 0.8);
-  position: absolute;
-  margin-top: 50px;
 }
 
 .best-score-display {
@@ -779,7 +915,7 @@ onUnmounted(() => {
   background: rgba(0, 0, 0, 0.5);
   padding: 4px 12px;
   border-radius: 12px;
-  display: block;
+  display: none;
 }
 
 .user-info {
@@ -792,7 +928,6 @@ onUnmounted(() => {
   background: rgba(0, 0, 0, 0.5);
   padding: 4px 10px;
   border-radius: 12px;
-  display: block;
   display: none;
 }
 
@@ -808,37 +943,51 @@ onUnmounted(() => {
   transform: translateX(-50%);
 }
 
+/* Исправленная игровая область */
 .game-area {
   width: 100vw;
   height: 100vh;
-  position: relative;
+  position: fixed;
+  top: 0;
+  left: 0;
   overflow: hidden;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  touch-action: none;
+  border-radius: none;
 }
 
+/* Увеличенные предметы */
 .item {
   position: absolute;
-  width: 50px;
-  height: 50px;
-  font-size: 36px;
   text-align: center;
-  line-height: 50px;
   pointer-events: none;
   z-index: 10;
+  transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+  box-sizing: border-box;
 }
 
 .item.apple {
-  animation: float 2s ease-in-out infinite;
-  filter: drop-shadow(0 0 10px rgba(255, 50, 50, 0.6));
+  animation: float 2.5s ease-in-out infinite;
+  filter: drop-shadow(0 0 15px rgba(255, 50, 50, 0.7));
 }
 
 .item.star {
-  animation: spin 1.5s linear infinite, glow 1s alternate infinite;
-  filter: drop-shadow(0 0 15px gold);
+  animation: spin 2s linear infinite, glow 1.5s alternate infinite;
+  filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.8));
 }
 
 .item.bomb {
-  animation: shake 0.3s infinite;
-  filter: drop-shadow(0 0 15px rgba(255, 0, 0, 0.8));
+  animation: shake 0.5s infinite, bombGlow 1s alternate infinite;
+  filter: drop-shadow(0 0 20px rgba(255, 0, 0, 0.9));
+}
+
+/* Анимация пойманного предмета */
+.item.caught {
+  animation: caught 0.3s forwards !important;
+  z-index: 15;
+  pointer-events: none;
 }
 
 .bucket {
@@ -851,21 +1000,28 @@ onUnmounted(() => {
   z-index: 20;
   cursor: pointer;
   filter: drop-shadow(0 4px 12px rgba(255, 165, 0, 0.6));
-  transition: transform 0.1s;
+  transition: transform 0.1s, filter 0.2s;
   user-select: none;
   pointer-events: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.3);
+  box-sizing: border-box;
 }
 
 .bucket:active {
   transform: scale(0.95);
 }
 
-.game-over {
+/* Экран выигрыша */
+.win-screen {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   background: rgba(0, 0, 0, 0.95);
   display: flex;
   flex-direction: column;
@@ -874,13 +1030,15 @@ onUnmounted(() => {
   z-index: 1000;
   padding: 20px;
   text-align: center;
+  box-sizing: border-box;
 }
 
-.game-over h2 {
-  color: #fff;
-  font-size: 42px;
-  margin-bottom: 24px;
-  text-shadow: 0 0 15px #ff4500;
+.win-screen h2 {
+  color: #4dff88;
+  font-size: 48px;
+  margin-bottom: 20px;
+  text-shadow: 0 0 20px rgba(77, 255, 136, 0.8);
+  animation: winGlow 1.5s infinite alternate;
 }
 
 .final-score {
@@ -906,6 +1064,93 @@ onUnmounted(() => {
   animation: glowText 1s infinite alternate;
 }
 
+.win-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 30px;
+  width: 100%;
+  max-width: 300px;
+}
+
+.play-again-btn {
+  padding: 16px 32px;
+  font-size: 18px;
+  background: linear-gradient(to right, #00cc66, #00ff88);
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 4px 12px rgba(0, 204, 102, 0.4);
+  transition: transform 0.2s;
+  min-width: 250px;
+  box-sizing: border-box;
+}
+
+.back-btn {
+  padding: 16px 32px;
+  font-size: 18px;
+  background: linear-gradient(to right, #0066cc, #0099ff);
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 4px 12px rgba(0, 102, 204, 0.4);
+  transition: transform 0.2s;
+  min-width: 250px;
+  text-decoration: none;
+  display: inline-block;
+  box-sizing: border-box;
+}
+
+.play-again-btn:hover, .back-btn:hover {
+  transform: scale(1.05);
+}
+
+.play-again-btn:active, .back-btn:active {
+  transform: scale(0.95);
+}
+
+/* Экран проигрыша */
+.game-over {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.95);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.game-over h2 {
+  color: #fff;
+  font-size: 42px;
+  margin-bottom: 24px;
+  text-shadow: 0 0 15px #ff4500;
+}
+
+.game-over h2:first-child {
+  color: #ff6b6b;
+  text-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+}
+
+.bomb-message {
+  color: #ff6b6b;
+  font-size: 22px;
+  margin: 10px 0;
+  font-weight: bold;
+  animation: blink 0.8s infinite alternate;
+}
+
 .save-status {
   margin: 10px 0;
   padding: 8px 16px;
@@ -913,6 +1158,8 @@ onUnmounted(() => {
   font-size: 14px;
   background: rgba(255, 255, 255, 0.1);
   display: block;
+  min-height: 20px;
+  box-sizing: border-box;
 }
 
 .save-status.success {
@@ -926,33 +1173,24 @@ onUnmounted(() => {
   color: #ff6b6b;
 }
 
-.game-over button {
-  margin-top: 24px;
-  padding: 14px 36px;
-  font-size: 18px;
-  background: linear-gradient(to right, #ff4500, #ff8c00);
-  color: #fff;
-  border: none;
-  border-radius: 20px;
-  cursor: pointer;
-  font-weight: bold;
-  box-shadow: 0 4px 12px rgba(255, 69, 0, 0.4);
-  transition: transform 0.2s;
-}
-
-.game-over button:hover {
-  transform: scale(1.05);
-}
-
-.game-over button:active {
-  transform: scale(0.95);
+.game-over-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 30px;
+  width: 100%;
+  max-width: 300px;
 }
 
 .retry-btn {
   background: linear-gradient(to right, #0066ff, #00ccff) !important;
-  margin-top: 10px !important;
+  margin-top: 15px !important;
+  padding: 12px 24px;
+  font-size: 16px;
+  box-sizing: border-box;
 }
 
+/* Анимации */
 @keyframes pulse {
   0%, 100% { transform: scale(1); opacity: 1; }
   50% { transform: scale(1.1); opacity: 0.9; }
@@ -960,7 +1198,7 @@ onUnmounted(() => {
 
 @keyframes float {
   0%, 100% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-10px) rotate(5deg); }
+  50% { transform: translateY(-15px) rotate(5deg); }
 }
 
 @keyframes spin {
@@ -969,14 +1207,25 @@ onUnmounted(() => {
 }
 
 @keyframes glow {
-  from { filter: drop-shadow(0 0 6px gold) brightness(1.2); }
-  to { filter: drop-shadow(0 0 20px gold) brightness(1.5); }
+  from { filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.6)) brightness(1.2); }
+  to { filter: drop-shadow(0 0 25px rgba(255, 215, 0, 1)) brightness(1.5); }
+}
+
+@keyframes bombGlow {
+  from { 
+    filter: drop-shadow(0 0 15px rgba(255, 0, 0, 0.7)) brightness(1.2); 
+    transform: scale(1);
+  }
+  to { 
+    filter: drop-shadow(0 0 25px rgba(255, 0, 0, 1)) brightness(1.5); 
+    transform: scale(1.05);
+  }
 }
 
 @keyframes shake {
-  0%, 100% { transform: translateX(0px); }
-  25% { transform: translateX(-5px); }
-  75% { transform: translateX(5px); }
+  0%, 100% { transform: translateX(0px) rotate(0deg); }
+  25% { transform: translateX(-6px) rotate(-5deg); }
+  75% { transform: translateX(6px) rotate(5deg); }
 }
 
 @keyframes glowText {
@@ -984,44 +1233,151 @@ onUnmounted(() => {
   to { text-shadow: 0 0 20px rgba(77, 255, 136, 1); }
 }
 
+@keyframes winGlow {
+  from { 
+    text-shadow: 0 0 15px rgba(77, 255, 136, 0.8);
+    transform: scale(1);
+  }
+  to { 
+    text-shadow: 0 0 25px rgba(77, 255, 136, 1);
+    transform: scale(1.05);
+  }
+}
+
+@keyframes caught {
+  0% { 
+    transform: scale(1) rotate(0deg); 
+    opacity: 1;
+  }
+  50% { 
+    transform: scale(1.4) rotate(180deg); 
+    opacity: 0.7;
+  }
+  100% { 
+    transform: scale(0) rotate(360deg); 
+    opacity: 0;
+  }
+}
+
+@keyframes blink {
+  from { opacity: 0.7; }
+  to { opacity: 1; }
+}
+
 @media (max-width: 768px) {
   .countdown-number { font-size: 70px; }
   .time { font-size: 24px; }
   .score { font-size: 28px; }
   .bucket { 
-    width: 60px; 
-    height: 60px; 
-    font-size: 42px; 
-    line-height: 60px; 
+    width: 70px; 
+    height: 70px; 
+    font-size: 45px; 
+    line-height: 65px; 
   }
-  .item { 
-    width: 45px; 
-    height: 45px; 
-    font-size: 32px; 
-    line-height: 45px; 
-  }
+  
+  .win-screen h2 { font-size: 36px; }
   .game-over h2 { font-size: 36px; }
+  
   .final-score { font-size: 28px; }
+  .bomb-message { font-size: 20px; }
   .best-record { font-size: 20px; }
   .new-record { font-size: 24px; }
-  .game-over button { 
-    padding: 12px 28px; 
+  
+  .play-again-btn, .back-btn { 
+    padding: 14px 28px; 
     font-size: 16px; 
     min-width: 200px;
   }
+  
   .retry-btn {
     min-width: 200px;
   }
+  
   .user-info {
     font-size: 12px;
     top: 5px;
     right: 10px;
     padding: 3px 8px;
   }
+  
   .best-score-display {
     font-size: 12px;
     padding: 3px 10px;
     top: 110px;
+  }
+  
+  /* Уменьшаем предметы на мобильных */
+  .item.apple {
+    width: 60px !important;
+    height: 60px !important;
+    font-size: 40px !important;
+    line-height: 60px !important;
+  }
+  
+  .item.star {
+    width: 55px !important;
+    height: 55px !important;
+    font-size: 35px !important;
+    line-height: 55px !important;
+  }
+  
+  .item.bomb {
+    width: 65px !important;
+    height: 65px !important;
+    font-size: 45px !important;
+    line-height: 65px !important;
+  }
+}
+
+/* Для очень маленьких экранов */
+@media (max-width: 360px) {
+  .bucket { 
+    width: 65px; 
+    height: 65px; 
+    font-size: 40px; 
+    line-height: 60px; 
+  }
+  
+  .play-again-btn, .back-btn { 
+    min-width: 180px;
+    padding: 12px 24px;
+  }
+  
+  .item.apple {
+    width: 55px !important;
+    height: 55px !important;
+    font-size: 35px !important;
+    line-height: 55px !important;
+  }
+  
+  .item.star {
+    width: 50px !important;
+    height: 50px !important;
+    font-size: 30px !important;
+    line-height: 50px !important;
+  }
+  
+  .item.bomb {
+    width: 60px !important;
+    height: 60px !important;
+    font-size: 40px !important;
+    line-height: 60px !important;
+  }
+}
+
+/* Фикс для Safari и мобильных браузеров */
+@supports (-webkit-touch-callout: none) {
+  .game-container {
+    height: -webkit-fill-available;
+  }
+  
+  .game-area {
+    height: -webkit-fill-available;
+  }
+  
+  .win-screen,
+  .game-over {
+    height: -webkit-fill-available;
   }
 }
 </style>
