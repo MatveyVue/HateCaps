@@ -68,7 +68,7 @@
       </div>
     </div>
     
-    <div v-if="topPlayers.length === 0" class="no-data">
+    <div v-if="topPlayers.length === 0 && !isLoading" class="no-data">
       Нет данных об игроках
     </div>
   </div>
@@ -79,44 +79,42 @@
 
   <div class="bar">
     <div class="btn-container">
-      <RouterLink to="/market">
-        <button class="market" @click="triggerMediumHaptic">
+      <router-link to="/market">
+        <button class="market">
           <img style="position: absolute; margin-left: -17px; margin-top: 5px;" src="https://github.com/MatveyVue/icopn/blob/main/Market.png?raw=true" width="33px"></img>
           <p style="margin-top: 40px;">Market</p>
         </button>
-      </RouterLink>
-      <RouterLink to="/">
-        <button class="leaders" @click="triggerMediumHaptic">
+      </router-link>
+      
+      <router-link to="/">
+        <button class="leaders">
           <img style="position: absolute; margin-left: -18px;" src="https://github.com/MatveyVue/icopn/blob/main/LeaderBoard.png?raw=true" width="40px"></img>
           <p style="margin-top: 40px; color: white;">Top</p>
         </button>
-      </RouterLink>
-      <button class="game" @click="triggerMediumHaptic">
-        <img style="position: absolute; margin-left: -23px; margin-top: -4px;" src="https://github.com/MatveyVue/icopn/blob/main/GameActive.PNG?raw=true" width="45px"></img>
-        <p style="margin-top: 40px; color: rgb(25, 122, 207);">Game</p>
-      </button>
-      <RouterLink to="/profile">
-        <button class="profile" @click="triggerMediumHaptic">
+      </router-link>
+      
+      <router-link to="/games">
+        <button class="game">
+          <img style="position: absolute; margin-left: -23px; margin-top: -4px;" src="https://github.com/MatveyVue/icopn/blob/main/GameActive.PNG?raw=true" width="45px"></img>
+          <p style="margin-top: 40px; color: rgb(25, 122, 207);">Game</p>
+        </button>
+      </router-link>
+      
+      <router-link to="/profile">
+        <button class="profile">
           <img style="position: absolute; margin-left: -18px;" src="https://github.com/MatveyVue/icopn/blob/main/Profile.png?raw=true" width="35px"></img>
           <p style="margin-top: 40px;">Profile</p>
         </button>
-      </RouterLink>
+      </router-link>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { initializeApp } from 'firebase/app'
-import { 
-  getFirestore, 
-  collection, 
-  query, 
-  orderBy, 
-  limit, 
-  getDocs 
-} from 'firebase/firestore'
+import { useRouter } from 'vue-router'
 
+// Firebase импорты
 const firebaseConfig = {
   apiKey: "AIzaSyAC5LEXiZ-_LcPg3pUlb9tuDzQvUptHF7s",
   authDomain: "giftcaps.firebaseapp.com",
@@ -128,16 +126,9 @@ const firebaseConfig = {
   measurementId: "G-LK9N0SKT0P"
 }
 
-let db = null
-try {
-  const app = initializeApp(firebaseConfig)
-  db = getFirestore(app)
-  console.log('✅ Firebase инициализирован')
-} catch (error) {
-  console.error('❌ Ошибка инициализации Firebase:', error)
-}
-
+const router = useRouter()
 const topPlayers = ref([])
+const isLoading = ref(true)
 
 // Функция для получения первой буквы имени для дефолтной аватарки
 const getInitial = (username) => {
@@ -145,22 +136,88 @@ const getInitial = (username) => {
   return username.charAt(0).toUpperCase()
 }
 
+// Динамическая загрузка Firebase
+const loadFirebase = () => {
+  return new Promise((resolve) => {
+    if (window.firebase && window.firebase.firestore) {
+      console.log('✅ Firebase уже загружен')
+      resolve(true)
+      return
+    }
+
+    console.log('⬇️ Загружаем Firebase SDK...')
+    
+    const script1 = document.createElement('script')
+    script1.src = 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js'
+    script1.onload = () => {
+      const script2 = document.createElement('script')
+      script2.src = 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js'
+      script2.onload = () => {
+        console.log('✅ Firebase SDK загружены')
+        resolve(true)
+      }
+      script2.onerror = () => {
+        console.error('❌ Ошибка загрузки Firestore')
+        resolve(false)
+      }
+      document.head.appendChild(script2)
+    }
+    script1.onerror = () => {
+      console.error('❌ Ошибка загрузки Firebase App')
+      resolve(false)
+    }
+    document.head.appendChild(script1)
+  })
+}
+
+// Инициализация Firebase
+const initFirebase = async () => {
+  try {
+    const loaded = await loadFirebase()
+    if (!loaded) {
+      console.log('❌ Не удалось загрузить Firebase SDK')
+      return null
+    }
+
+    if (!window.firebase || !window.firebase.initializeApp) {
+      console.log('❌ Firebase SDK не готов')
+      return null
+    }
+    
+    let app
+    if (!window.firebase.apps || window.firebase.apps.length === 0) {
+      console.log('🆕 Создаем новое Firebase приложение')
+      app = window.firebase.initializeApp(firebaseConfig)
+    } else {
+      console.log('📌 Используем существующее Firebase приложение')
+      app = window.firebase.apps[0]
+    }
+    
+    const db = window.firebase.firestore(app)
+    console.log('✅ Firebase инициализирован успешно')
+    
+    return db
+    
+  } catch (error) {
+    console.error('❌ Ошибка Firebase:', error)
+    return null
+  }
+}
+
 const fetchTopPlayers = async () => {
   try {
+    const db = await initFirebase()
     if (!db) {
       throw new Error('Firebase не инициализирован')
     }
     
-    const playersRef = collection(db, 'players')
-    const topQuery = query(
-      playersRef,
-      orderBy('totalScore', 'desc'),
-      limit(10)
-    )
+    const playersRef = db.collection('players')
+    const querySnapshot = await playersRef
+      .orderBy('totalScore', 'desc')
+      .limit(10)
+      .get()
     
-    const querySnapshot = await getDocs(topQuery)
     const players = []
-    
     querySnapshot.forEach((doc) => {
       const data = doc.data()
       players.push({
@@ -177,31 +234,35 @@ const fetchTopPlayers = async () => {
     console.log('✅ Загружено игроков:', players.length)
   } catch (err) {
     console.error('❌ Ошибка загрузки:', err)
+  } finally {
+    isLoading.value = false
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
+  // Начинаем загрузку сразу
   fetchTopPlayers()
+  
+  // Убираем прелоадер через 2 секунды максимум
+  setTimeout(() => {
+    isLoading.value = false
+    const preloader = document.getElementById('preloader')
+    if (preloader) {
+      preloader.classList.add('hidden')
+    }
+  }, 2000)
 })
 
-const isLoading = ref(true);
-
-onMounted(() => {
-    isLoading.value = true;
-});
-
-window.addEventListener('load', function() {
-});
-
-setTimeout(function() {
-    const preloader = document.getElementById('preloader');
-    if (preloader) { // Проверяем, существует ли элемент
-        preloader.classList.add('hidden'); // Добавляем класс для скрытия
-    }
-}, 5000);
+// Функция для вибрации
+const triggerMediumHaptic = () => {
+  if ('vibrate' in navigator) {
+    navigator.vibrate(50)
+  }
+}
 </script>
 
 <style scoped>
+/* Остальные стили остаются как были */
 .leaderboard {
   max-width: 800px;
   margin: 0 auto;
