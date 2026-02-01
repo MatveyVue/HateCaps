@@ -824,23 +824,10 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* Исправленные стили для выравнивания */
-.game-container {
+body {
+  background-color: black;
   width: 100vw;
   height: 100vh;
-  background: #000;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  overflow: hidden;
-  font-family: system-ui, -apple-system, sans-serif;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
 }
 
 .countdown {
@@ -956,6 +943,7 @@ onUnmounted(() => {
   box-sizing: border-box;
   touch-action: none;
   border-radius: none;
+  background-color: black;
 }
 
 /* Увеличенные предметы */
