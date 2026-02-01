@@ -1,7 +1,4 @@
 <template>
-<div v-if="isLoading" id="preloader">
-  <div style="" class="loader">loading</div>
-</div>
 <center>
     <div class="top-rating">
       <RouterLink to="/">
