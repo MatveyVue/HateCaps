@@ -1,4 +1,7 @@
 <template>
+<div v-if="isLoading" id="preloader">
+  <div style="" class="loader">loading</div>
+</div>
 <center>
     <div class="top-rating">
       <RouterLink to="/">
@@ -23,7 +26,7 @@
     <center>
       <div v-if="topPlayers.length > 0" class="stars-top1 player-container">
           <img :src="topPlayers[0].photo" alt="Фото" style="width: 100px; height: 100px; margin-top: 5px;" class="user-photo">
-          <div style="margin-left: 1px; margin-top: 95px;" class="top1">1</div>
+          <div style="margin-left: -5px; margin-top: 95px;" class="top1">1</div>
         <a :href="topPlayers[0].link || '#'">
           <b><p style="margin-top: -30px; margin-left: -5px; font-size: 18px;">{{ topPlayers[0].user ? topPlayers[0].user : 'Нет данных' }}<img style="margin-top: 2px; position: absolute;" :src="topPlayers[0].cap" width="20px"></img></p></b><br>
         </a>
