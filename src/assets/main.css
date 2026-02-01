@@ -281,6 +281,8 @@ a {
   margin-bottom: 20px; /* Внешний отступ снизу */
   overflow: hidden; /* Скрываем переполнение */
   box-sizing: border-box; /* Учитываем padding в высоте */
+  max-width: 420px;
+  max-height: 295px;
 }
 
 .name-game {
@@ -299,6 +301,17 @@ a {
   border-radius: 20px;
   float: right;
   margin-top: -70px;
+}
+
+.game-rating {
+  background-color: rgb(47, 47, 47);
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  position: absolute;
+  border: none;
+  margin-top: -70px;
+  margin-left: 13vw;
 }
 
 .gifts-container {
