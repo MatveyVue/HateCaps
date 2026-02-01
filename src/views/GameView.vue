@@ -9,6 +9,11 @@
 <center>
     <img style="border-radius: 20px; margin-top: -14px; margin-left: -10px;" src="https://github.com/MatveyVue/icopn/blob/main/Bombies.jpeg?raw=true" width="106%">
     <p class="name-game">Bombies</p><br>
+    <RouterLink to="BombRating">
+    <button class="game-rating">
+        <img style="position: absolute; margin-left: -14px; margin-top: -15px;" src="https://github.com/MatveyVue/icopn/blob/main/LeaderBoard.png?raw=true" width="28px"></img>
+    </button>
+    </RouterLink>
     <RouterLink to="game">
         <button style="color: black;" class="play-game">Play</button>
     </RouterLink>
