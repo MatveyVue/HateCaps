@@ -23,7 +23,7 @@
     <center>
       <div v-if="topPlayers.length > 0" class="stars-top1 player-container">
           <img :src="topPlayers[0].photo" alt="Фото" style="width: 100px; height: 100px; margin-top: 5px;" class="user-photo">
-          <div style="margin-left: -5px; margin-top: 95px;" class="top1">1</div>
+          <div style="margin-left: 5px; margin-top: 95px;" class="top1">1</div>
         <a :href="topPlayers[0].link || '#'">
           <b><p style="margin-top: -30px; margin-left: -5px; font-size: 18px;">{{ topPlayers[0].user ? topPlayers[0].user : 'Нет данных' }}<img style="margin-top: 2px; position: absolute;" :src="topPlayers[0].cap" width="20px"></img></p></b><br>
         </a>
@@ -51,8 +51,12 @@
 <div class="other-players">
     <div v-for="(player, index) in otherPlayers" :key="index" class="player-container2">
           <img :src="player.photo" alt="Фото" class="other-photo">
-        <a :href="player.link || '#'">
-          <p class="other-player">{{ player.user ? player.user : 'Нет данных' }}<img style="margin-top: 0px; position: absolute;" :src="player.cap" width="20px"></p>
+        <a style="width: 100px;" :href="player.link || '#'">
+          <p class="other-player">{{ player.user ? player.user : 'Нет данных' }}</p>
+        </a>
+        <a :href="player.caplink">
+          <img style="margin-top: -35px; position: absolute; margin-left: 175px;" :src="player.cap" width="20px">
+          <p style="margin-top: -35px; position: absolute; margin-left: 200px;">#{{ player.number }}</p>
         </a>
           <img class="stars-other" src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/Stars.png?raw=true" width="25px">
           <p class="other-stars">{{ player.stars }}</p>
