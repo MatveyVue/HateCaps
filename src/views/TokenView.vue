@@ -65,28 +65,35 @@
 <p style="color: rgb(20, 20, 20); font-size: 5px;">.</p>
 
 <div>
-    <div class="border-wallet" v-if="topHolders.length > 3" style="display: flex; align-items: center; gap: 10px;">
-      <img :src="getAvatar(topHolders[3].owner.address)" width="45px" alt="Holder Avatar" style="border-radius: 50%; margin-left: 5px;">
-      <div>
-        <a :href="'https://tonviewer.com/address/' + topHolders[3].owner.address" target="_blank" rel="noopener noreferrer">
-          <b><p style="margin-left: 10px;" class="wallet">{{ shortenAddress(topHolders[3].owner.address) }}</p></b>
-        </a>
-        <p style="float: right; margin-left: 62vw;" class="tokens-wallet">{{ formatBalance(topHolders[3].balance) }}</p>
-      </div>
+  <div 
+    class="border-wallet" 
+    v-for="(holder, index) in otherHolders" 
+    :key="holder.owner.address" 
+    style="display: flex; align-items: center; gap: 10px;"
+  >
+    <!-- Отображаем место, начиная с 4 (индекс 0 в массиве = место #4) -->
+    <div class="position-badge" style="min-width: 40px; text-align: center; font-weight: bold;">
+      #{{ index + 4 }}
     </div>
-</div>
-
-    <!-- Остальные кошельки -->
-<div>
-    <div class="border-wallet" v-for="holder in otherHolders" :key="holder.owner.address" style="display: flex; align-items: center; gap: 10px;">
-      <img :src="getAvatar(holder.owner.address)" width="45px" alt="Holder Avatar" style="border-radius: 50%; margin-left: 5px;">
-      <div>
-        <a :href="'https://tonviewer.com/address/' + holder.owner.address" target="_blank" rel="noopener noreferrer">
-          <b><p class="wallet">{{ shortenAddress(holder.owner.address) }}</p></b>
-        </a>
-        <p class="tokens-wallet">{{ formatBalance(holder.balance) }}</p>
-      </div>
+    
+    <img 
+      :src="getAvatar(holder.owner.address)" 
+      width="45px" 
+      alt="Holder Avatar" 
+      style="border-radius: 50%; margin-left: -10px;"
+    >
+    
+    <div>
+      <a 
+        :href="'https://tonviewer.com/address/' + holder.owner.address" 
+        target="_blank" 
+        rel="noopener noreferrer"
+      >
+        <b><p class="wallet">{{ shortenAddress(holder.owner.address) }}</p></b>
+      </a>
+      <p class="tokens-wallet">{{ formatBalance(holder.balance) }}</p>
     </div>
+  </div>
 </div>
 
 
@@ -161,6 +168,8 @@ export default {
         
         // Адрес для 5-го места (специальная аватарка)
         '0:027749cd26265ca584c6ac7f7fce9ebfb1449556a88122865eebd68af8b2d0ce': 'https://github.com/MatveyVue/Profiles-Telegram/blob/main/Webby.jpg?raw=true',
+
+        '0:0c3241400f8877b8e57d5c4f88a55de96f4202182978ca034f8129698824d5f5': 'https://github.com/MatveyVue/Profiles-Telegram/blob/main/scmd.jpg?raw=true',
       },
       // Добавляем positionAvatars, так как на него есть ссылка в getAvatar
       positionAvatars: {
@@ -169,15 +178,16 @@ export default {
         3: 'https://github.com/MatveyVue/Profiles-Telegram/blob/main/holders.jpg?raw=true',
         4: 'https://github.com/MatveyVue/Profiles-Telegram/blob/main/Webby.jpg?raw=true',
         5: 'https://github.com/MatveyVue/Profiles-Telegram/blob/main/Rstm.jpg?raw=true',
+        8: 'https://github.com/MatveyVue/Profiles-Telegram/blob/main/scmd.jpg?raw=true',
       }
     }
   },
   computed: {
     topHolders() {
-      return this.holders.slice(0, 4);
+      return this.holders.slice(0, 3);
     },
     otherHolders() {
-      return this.holders.slice(4);
+      return this.holders.slice(3);
     }
   },
   created() {
