@@ -2,7 +2,7 @@ import axios from 'axios'
 
 const API_URL =
   import.meta.env.VITE_SWIFTGIFTS_API_URL ||
-  'https://api-swiftgifts.vercel.app/api/aggregator'
+  'https://partners.swiftgifts.tg/api/aggregator'
 const API_KEY = import.meta.env.VITE_SWIFTGIFTS_API_KEY
 const CACHE_TTL_MS = 5 * 60 * 1000
 
