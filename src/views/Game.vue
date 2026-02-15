@@ -323,9 +323,12 @@ const initUser = () => {
 const initGame = () => {
   const width = window.innerWidth;
   const height = window.innerHeight;
+  
+  // Фиксируем ведро внизу экрана, на 100px от нижнего края
+  // Ведро будет двигаться только по горизонтали
   bucketPosition.value = { 
-    x: (width - 80) / 2,
-    y: height - 150 
+    x: (width - 80) / 2,  // Центрируем по горизонтали
+    y: height - 120        // Фиксированная позиция по вертикали (внизу)
   };
 };
 
@@ -746,16 +749,16 @@ const goToMenu = () => {
   router.push('/games');
 };
 
-// Управление ведром
+// Управление ведром (только по горизонтали!)
 const startDrag = (e) => {
   if (showWinScreen.value || showLoseScreen.value) return;
   isDragging.value = true;
-  updateBucket(e.clientX, e.clientY);
+  updateBucket(e.clientX); // Передаем только X координату
 };
 
 const moveDrag = (e) => {
   if (!isDragging.value || showWinScreen.value || showLoseScreen.value) return;
-  updateBucket(e.clientX, e.clientY);
+  updateBucket(e.clientX); // Передаем только X координату
 };
 
 const stopDrag = () => {
@@ -768,27 +771,31 @@ const handleTouchStart = (e) => {
   e.preventDefault();
   isDragging.value = true;
   const touch = e.touches[0];
-  updateBucket(touch.clientX, touch.clientY);
+  updateBucket(touch.clientX); // Передаем только X координату
 };
 
 const handleTouchMove = (e) => {
   if (!isDragging.value || showWinScreen.value || showLoseScreen.value) return;
   e.preventDefault();
   const touch = e.touches[0];
-  updateBucket(touch.clientX, touch.clientY);
+  updateBucket(touch.clientX); // Передаем только X координату
 };
 
-const updateBucket = (x, y) => {
+// Обновление позиции ведра (ТОЛЬКО X координата!)
+const updateBucket = (x) => {
   const width = window.innerWidth;
   const height = window.innerHeight;
   
-  let newX = x - 40;
-  let newY = y - 40;
+  // Вычисляем новую X позицию (центрируем ведро относительно курсора/пальца)
+  let newX = x - 40; // 40 - половина ширины ведра
   
+  // Ограничиваем по горизонтали, чтобы ведро не выходило за края экрана
   newX = Math.max(10, Math.min(width - 90, newX));
-  newY = Math.max(10, Math.min(height - 90, newY));
   
-  bucketPosition.value = { x: newX, y: newY };
+  // Y координата фиксирована (не меняется)
+  const fixedY = height - 120;
+  
+  bucketPosition.value = { x: newX, y: fixedY };
 };
 
 // Жизненный цикл
