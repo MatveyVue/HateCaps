@@ -169,7 +169,7 @@ export default {
         // Адрес для 5-го места (специальная аватарка)
         '0:027749cd26265ca584c6ac7f7fce9ebfb1449556a88122865eebd68af8b2d0ce': 'https://github.com/MatveyVue/Profiles-Telegram/blob/main/Webby.jpg?raw=true',
 
-        '0:0c3241400f8877b8e57d5c4f88a55de96f4202182978ca034f8129698824d5f5': 'https://github.com/MatveyVue/Profiles-Telegram/blob/main/scmd.jpg?raw=true',
+        '0:0d2f99277afb3f3adcfe7c3503d07b4e02d5afca566b78e27fc175e30685cbda': 'https://github.com/MatveyVue/Profiles-Telegram/blob/main/scmd.jpg?raw=true',
       },
       // Добавляем positionAvatars, так как на него есть ссылка в getAvatar
       positionAvatars: {
@@ -178,7 +178,7 @@ export default {
         3: 'https://github.com/MatveyVue/Profiles-Telegram/blob/main/holders.jpg?raw=true',
         4: 'https://github.com/MatveyVue/Profiles-Telegram/blob/main/Webby.jpg?raw=true',
         5: 'https://github.com/MatveyVue/Profiles-Telegram/blob/main/Rstm.jpg?raw=true',
-        8: 'https://github.com/MatveyVue/Profiles-Telegram/blob/main/scmd.jpg?raw=true',
+        9: 'https://github.com/MatveyVue/Profiles-Telegram/blob/main/scmd.jpg?raw=true',
       }
     }
   },
