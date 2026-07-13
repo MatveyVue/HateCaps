@@ -24,48 +24,45 @@
   <p style="font-size: 12px; margin-left: 20px; margin-top: -20px;">SCMD69</p>
   <div class="btn-container">
     <button class="balance-btn-active" type="button" @click="handleDeposit">
-      <img style="width: 20px; margin-left: -85px; margin-top: 5px;" src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/Balance.PNG?raw=true">
-      <p style="margin-top: -25px; margin-left: 65px; position: absolute;">Deposit</p>
+      <img style="width: 20px; margin-left: -85px; margin-top: 10px;" src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/Balance.PNG?raw=true">
+      <p style="margin-top: -24px; margin-left: 10px;">Deposit</p>
     </button>
     <button class="balance-btn" type="button" @click="handleWithdraw">
-      <img style="width: 20px; margin-left: -100px; margin-top: 5px; transform: rotate(180deg);" src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/Balance.PNG?raw=true">
-      <p style="margin-top: -25px; margin-left: 65px; position: absolute;">Withdraw</p>
+      <img style="width: 20px; margin-left: -100px; margin-top: 10px; transform: rotate(180deg);" src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/Balance.PNG?raw=true">
+      <p style="margin-top: -24px; margin-left: 10px;">Withdraw</p>
     </button>
   </div>
 
-<div style="margin-top: 25px;" class="claim-container">
-  <img style="width: 60px; margin-top: 2px; margin-left: -10px;" src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/Timer.PNG?raw=true">
-  <p style="font-size: 12px; color: #6e6e6e; margin-top: -25px; margin-left: -10px;">Next Claim</p>
-  <p style="font-size: 18px; margin-left: -74px; margin-top: 10px;">12h 43m</p>
-  <button style="background-color: #111217; border: none; float: right; margin-top: -5px; margin-right: 5px;">
-    <img style="width: 25px;" src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/next.PNG?raw=true">
+<div class="claim-container">
+  <img style="width: 60px; margin-top: 2px; margin-left: 2px;" src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/Timer.PNG?raw=true">
+  <p style="font-size: 12px; color: #6e6e6e; margin-top: -57px; margin-left: 65px;">Next Claim</p>
+  <p style="font-size: 18px; margin-left: 65px; margin-top: -10px;">12h 43m</p>
+  <button style="background-color: #111217; border: none; float: right; margin-top: -50px; margin-right: 5px;">
+    <img style="width: 25px;" src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/next.PNG?raw=true"
   </button>
 </div>
 
 <div class="history-container">
-  <p style="color: rgb(30, 88, 215); font-size: 12px; float: right; margin-top: 5px; margin-right: 10px;">View All</p>
-  <p style="color: #6e6e6e; font-size: 12px; margin-left: 12px; margin-top: 5px;">RECENT ACTIVITY</p>
+  <p style="color: rgb(30, 88, 215); font-size: 12px; float: right; margin-top: 15px; margin-right: 20px;">View All</p>
+  <p style="color: #6e6e6e; font-size: 12px; margin-left: 20px; margin-top: 15px;">RECENT ACTIVITY</p>
 
   <div v-if="activityLoading" class="transaction-container">
     <p class="name-transaction">Loading activity...</p>
   </div>
 
   <div v-else-if="activityList.length === 0" class="transaction-container">
-    <p style="margin-left: 12px;" class="name-transaction">No activity yet</p>
+    <p class="name-transaction">No activity yet</p>
   </div>
 
-  <div style="margin-left: -10px; margin-top: -10px;" v-else v-for="item in activityList" :key="item.created_at + item.type" class="transaction-container">
-   <img style="width: 70px;" :src="getActivityIcon(item.type)">
-    <p style="margin-top: -15px; margin-left: -15px;" class="name-transaction">{{ getActivityTitle(item.type) }}</p>
-    <p style="margin-top: -75px; margin-left: 65px;" class="date-transaction">{{ formatActivityDate(item.created_at) }}</p>
-    <p style="position: absolute; right: 5px; margin-top: -40px;" class="sum-transaction" :class="getActivityClass(item.type)">{{ formatActivityAmount(item.amount, item.type) }}</p>
-    <p style="position: absolute; right: 5px; margin-top: -8px;" class="token-transaction">SCMD69</p>
-    <hr style="width: 90%; border: 0; height: 1px; background: #18191e; margin-top: -50px; margin-left: 25px;">
+  <div v-else v-for="item in activityList" :key="item.created_at + item.type" class="transaction-container">
+    <img style="width: 70px;" :src="getActivityIcon(item.type)">
+    <p class="name-transaction">{{ getActivityTitle(item.type) }}</p>
+    <p class="date-transaction">{{ formatActivityDate(item.created_at) }}</p>
+    <p class="sum-transaction" :class="getActivityClass(item.type)">{{ formatActivityAmount(item.amount, item.type) }}</p>
+    <p class="token-transaction">SCMD69</p>
+    <hr style="width: 90%; border: 0; height: 1px; background: #18191e;">
   </div>
 </div>
-<p style="color: #0a0b0d;">.</p>
-<p style="color: #0a0b0d;">.</p>
-<p style="color: #0a0b0d;">.</p>
 </div>
 </div>
 
@@ -153,81 +150,31 @@
 <div style="margin-top: 3px;" class="btn-container">
 <RouterLink to="/market">
     <button class="market" @click="triggerMediumHaptic">
-        <img style="position: absolute; margin-left: -17px; margin-top: 5px;" src="https://github.com/MatveyVue/icopn/blob/main/Market.png?raw=true" width="33px">
+        <img style="position: absolute; margin-left: -17px; margin-top: 5px;" src="https://github.com/MatveyVue/icopn/blob/main/Market.png?raw=true" width="33px"></img>
         <p style="margin-top: 40px; color: white;">Market</p>
     </button>
 </RouterLink>
 <RouterLink to="/">
     <button class="leaders" @click="triggerMediumHaptic">
-        <img style="position: absolute; margin-left: -18px;" src="https://github.com/MatveyVue/icopn/blob/main/LeaderBoard.png?raw=true" width="40px">
+        <img style="position: absolute; margin-left: -18px;" src="https://github.com/MatveyVue/icopn/blob/main/LeaderBoard.png?raw=true" width="40px"></img>
         <p style="margin-top: 40px; color: white;">Top</p>
     </button>
-</RouterLink>
 <RouterLink to="/staking">
     <button class="game" @click="triggerMediumHaptic">
-        <img style="position: absolute; margin-left: -37px; margin-top: 2px;" src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/staking.PNG?raw=true" width="75px">
+        <img style="position: absolute; margin-left: -37px; margin-top: 2px;" src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/staking.PNG?raw=true" width="75px"></img>
         <p style="margin-top: 40px;">Staking</p>
     </button>
 </RouterLink>
+</RouterLink>
     <button class="profile" @click="triggerMediumHaptic">
-        <img style="position: absolute; margin-left: -18px;" src="https://github.com/MatveyVue/icopn/blob/main/ProfileActive.png?raw=true" width="35px">
+        <img style="position: absolute; margin-left: -18px;" src="https://github.com/MatveyVue/icopn/blob/main/ProfileActive.png?raw=true" width="35px"></img>
         <p style="margin-top: 40px; color: rgb(25, 122, 207);">Profile</p>
     </button>
 </div>
 </div>
-
-<div v-if="depositModalOpen" class="wallet-modal-backdrop">
-  <div class="wallet-modal">
-    <button class="wallet-modal-close" type="button" @click="depositModalOpen = false">×</button>
-
-    <p class="wallet-modal-title">Deposit SCMD69</p>
-    <p class="wallet-modal-note">Send SCMD69 to this wallet and include the memo. Your balance will update after scanner confirmation.</p>
-    <p v-if="depositError" class="wallet-modal-error">{{ depositError }}</p>
-
-    <p class="wallet-modal-label">Wallet</p>
-    <div class="wallet-modal-row">
-      <p class="wallet-modal-value">{{ depositData?.wallet }}</p>
-      <button class="wallet-copy-btn" type="button" @click="copyText(depositData?.wallet, 'wallet')">{{ copiedField === 'wallet' ? 'Copied' : 'Copy' }}</button>
-    </div>
-
-    <p class="wallet-modal-label">Memo</p>
-    <div class="wallet-modal-row">
-      <p class="wallet-modal-value">{{ depositData?.memo }}</p>
-      <button class="wallet-copy-btn" type="button" @click="copyText(depositData?.memo, 'memo')">{{ copiedField === 'memo' ? 'Copied' : 'Copy' }}</button>
-    </div>
-
-    <p class="wallet-modal-label">Jetton Master</p>
-    <p class="wallet-modal-value">{{ depositData?.jetton_master }}</p>
-  </div>
-</div>
-
-<div v-if="withdrawModalOpen" class="wallet-modal-backdrop">
-  <div class="wallet-modal">
-    <button class="wallet-modal-close" type="button" @click="withdrawModalOpen = false">×</button>
-
-    <p class="wallet-modal-title">Withdraw SCMD69</p>
-    <p class="wallet-modal-note">Withdraw is sent from your available balance to your TON wallet.</p>
-
-    <p class="wallet-modal-label">Amount</p>
-    <input class="wallet-modal-input" v-model="withdrawAmount" inputmode="decimal" placeholder="Amount SCMD69">
-
-    <p class="wallet-modal-label">TON Wallet Address</p>
-    <input class="wallet-modal-input" v-model="withdrawAddress" placeholder="UQ...">
-
-    <p v-if="withdrawError" class="wallet-modal-error">{{ withdrawError }}</p>
-    <p v-if="withdrawSuccess" class="wallet-modal-success">{{ withdrawSuccess }}</p>
-
-    <button class="wallet-modal-submit" type="button" @click="submitWithdraw" :disabled="withdrawLoading">
-      {{ withdrawLoading ? 'Processing...' : 'Create Withdraw' }}
-    </button>
-  </div>
-</div>
-
 </template>
 
 <script setup>
-// ВАШ ОРИГИНАЛЬНЫЙ СКРИПТ — НЕ ТРОГАЛ
-// (весь код остаётся без изменений)
 import { ref, onBeforeUnmount, onMounted, watch } from 'vue'
 import { initializeApp } from 'firebase/app'
 import { getFirestore, doc, getDoc } from 'firebase/firestore'
@@ -266,19 +213,6 @@ const selectedGift = ref(null)
 const profileBalance = ref('0')
 const activityList = ref([])
 const activityLoading = ref(false)
-
-const depositModalOpen = ref(false)
-const withdrawModalOpen = ref(false)
-
-const depositData = ref(null)
-const depositError = ref('')
-const copiedField = ref('')
-
-const withdrawAmount = ref('')
-const withdrawAddress = ref('')
-const withdrawLoading = ref(false)
-const withdrawError = ref('')
-const withdrawSuccess = ref('')
 
 onMounted(async () => {
   const userData = window.Telegram?.WebApp?.initDataUnsafe?.user
@@ -322,60 +256,29 @@ async function loadActivityData() {
 
 async function handleDeposit() {
   try {
-    depositError.value = ''
     const data = await createDeposit()
-    depositData.value = data
-    depositModalOpen.value = true
+    alert(`Send SCMD69 to:\n${data.wallet}\n\nMemo:\n${data.memo}`)
     await loadActivityData()
   } catch (error) {
-    depositError.value = error.message
-    depositModalOpen.value = true
+    alert(error.message)
   }
 }
 
-function handleWithdraw() {
-  withdrawAmount.value = ''
-  withdrawAddress.value = ''
-  withdrawError.value = ''
-  withdrawSuccess.value = ''
-  withdrawLoading.value = false
-  withdrawModalOpen.value = true
-}
+async function handleWithdraw() {
+  const amountText = prompt('How many SCMD69 withdraw?')
+  if (!amountText) return
 
-async function copyText(text, field) {
-  if (!text) return
+  const address = prompt('Your TON wallet address')
+  if (!address) return
 
   try {
-    await navigator.clipboard.writeText(text)
-    copiedField.value = field
-
-    setTimeout(() => {
-      if (copiedField.value === field) {
-        copiedField.value = ''
-      }
-    }, 1000)
-  } catch (error) {
-    console.error('Copy failed:', error)
-  }
-}
-
-async function submitWithdraw() {
-  try {
-    withdrawError.value = ''
-    withdrawSuccess.value = ''
-    withdrawLoading.value = true
-
-    const nanoAmount = toNanoString(withdrawAmount.value)
-    await createWithdraw(nanoAmount, withdrawAddress.value)
-
+    const nanoAmount = toNanoString(amountText)
+    await createWithdraw(nanoAmount, address)
     await loadProfileData()
     await loadActivityData()
-
-    withdrawSuccess.value = 'Withdraw request created'
+    alert('Withdraw request created')
   } catch (error) {
-    withdrawError.value = error.message
-  } finally {
-    withdrawLoading.value = false
+    alert(error.message)
   }
 }
 
@@ -598,8 +501,8 @@ window.addEventListener('load', function() {
 
 setTimeout(function() {
     const preloader = document.getElementById('preloader');
-    if (preloader) {
-        preloader.classList.add('hidden');
+    if (preloader) { // Проверяем, существует ли элемент
+        preloader.classList.add('hidden'); // Добавляем класс для скрытия
     }
 }, 3000);
 </script>
@@ -667,8 +570,7 @@ setTimeout(function() {
 }
 
 .sum-transaction {
-  display: flex;
-  justify-content: flex-end;
+  float: right;
   font-size: 14px;
   margin-top: -44px;
   margin-right: 15px;
@@ -683,6 +585,7 @@ setTimeout(function() {
   margin-top: -28px;
 }
 
+/* ===== PREMIUM PROFILE HEADER STEP 1 ===== */
 .profile-header {
   display: flex;
   flex-direction: column;
@@ -699,7 +602,10 @@ setTimeout(function() {
   object-fit: cover;
   border-radius: 999px;
   border: 1px solid rgba(30, 88, 215, 0.45);
-  box-shadow: 0 0 0 1px rgba(30, 88, 215, 0.18), 0 0 30px rgba(30, 88, 215, 0.22), 0 18px 40px rgba(0,0,0,0.35);
+  box-shadow:
+    0 0 0 1px rgba(30, 88, 215, 0.18),
+    0 0 30px rgba(30, 88, 215, 0.22),
+    0 18px 40px rgba(0,0,0,0.35);
 }
 
 .username {
@@ -709,570 +615,623 @@ setTimeout(function() {
   font-family: Geologica;
 }
 
+
+/* ===== FINAL PREMIUM PROFILE UI START ===== */
+
+.profile-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 22px 0 18px;
+  background: radial-gradient(circle at top, rgba(30,88,215,0.18), transparent 65%);
+}
+
+.profile-img {
+  width: 150px !important;
+  height: 150px !important;
+  max-width: 116px !important;
+  object-fit: cover;
+  border-radius: 999px;
+  padding: 8px;
+  background: #07080d;
+  border: 1px solid rgba(30,88,215,0.45);
+  box-shadow: 0 0 34px rgba(30,88,215,0.24), 0 18px 45px rgba(0,0,0,0.35);
+}
+
+.username {
+  color: white;
+  font-size: 22px;
+  margin: 10px 0 0;
+  font-family: Geologica;
+}
+
 .profile-tabs {
   background: rgba(255,255,255,0.035);
   border: 1px solid rgba(255,255,255,0.06);
   border-radius: 18px;
   padding: 5px;
   margin: 0 0 14px;
-  display: flex;
-  gap: 5px;
 }
 
 .tab-btn {
-  flex: 1;
-  background: transparent;
-  border: none;
-  padding: 12px 0;
-  border-radius: 14px;
-  color: #8e8e93;
-  font-size: 14px;
-  font-weight: 500;
-  transition: all 0.2s;
-  cursor: pointer;
+  border-radius: 14px !important;
 }
 
-.tab-btn.active {
-  background: rgba(30, 88, 215);
-  color: white;
+.rewards,
+.claim-container,
+.history-container {
+  background: linear-gradient(180deg, #141720 0%, #0d0f15 100%) !important;
+  border: 1px solid rgba(30,88,215,0.18) !important;
+  border-radius: 24px !important;
+  box-shadow: 0 18px 44px rgba(0,0,0,0.34);
+}
+
+.rewards {
+  height: auto !important;
+  padding: 18px !important;
+}
+
+.rewards > img {
+  display: none !important;
+}
+
+.rewards > p:nth-of-type(1) {
+  margin: 0 !important;
+  color: #6e6e6e !important;
+  font-size: 12px !important;
+  letter-spacing: 0.5px;
+}
+
+.rewards > p:nth-of-type(2) {
+  margin: 8px 0 0 !important;
+  color: white !important;
+  font-size: 34px !important;
+  font-weight: 600;
+}
+
+.rewards > p:nth-of-type(3) {
+  margin: -4px 0 14px !important;
+  color: rgba(255,255,255,0.72) !important;
+  font-size: 13px !important;
+}
+
+.rewards .btn-container {
+  display: flex !important;
+  gap: 10px;
+  margin-top: 12px !important;
 }
 
 .balance-btn,
 .balance-btn-active {
-  width: 47%;
-  height: 54px;
-  margin: 0;
-  border-radius: 18px;
-  display: inline-block;
+  width: 50% !important;
+  height: 54px !important;
+  margin: 0 !important;
+  border-radius: 18px !important;
+  display: flex !important;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s;
-  margin-left: 7px;
+  gap: 8px;
 }
 
 .balance-btn-active {
-  background: linear-gradient(180deg, #2f6cff, #1e58d7);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: linear-gradient(180deg, #2f6cff, #1e58d7) !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
   box-shadow: 0 12px 30px rgba(30,88,215,0.32);
 }
 
 .balance-btn {
-  background: rgba(255,255,255,0.045);
-  border: 1px solid rgba(255,255,255,0.07);
+  background: rgba(255,255,255,0.045) !important;
+  border: 1px solid rgba(255,255,255,0.07) !important;
 }
 
 .balance-btn img,
 .balance-btn-active img {
-  width: 20px;
-  margin: 0;
+  width: 20px !important;
+  margin: 0 !important;
 }
 
 .balance-btn p,
 .balance-btn-active p {
-  margin: 0;
+  margin: 0 !important;
 }
 
-/* Claim container */
 .claim-container {
-  height: 72px;
-  margin-top: 14px;
-  padding: 0 14px;
-  display: flex;
+  height: 72px !important;
+  margin-top: 14px !important;
+  padding: 0 14px !important;
+  display: flex !important;
   align-items: center;
-  gap: 12px;
 }
 
 .claim-container > img {
-  width: 48px;
-  margin: 0;
+  width: 48px !important;
+  margin: 0 12px 0 0 !important;
 }
 
 .claim-container p {
-  margin: 0;
+  margin: 0 !important;
 }
 
-.claim-container p:first-of-type {
-  color: #6e6e6e;
-  font-size: 12px;
+.claim-container p:nth-of-type(1) {
+  color: #6e6e6e !important;
+  font-size: 12px !important;
 }
 
-.claim-container p:last-of-type {
-  color: white;
-  font-size: 18px;
-  margin-top: 3px;
+.claim-container p:nth-of-type(2) {
+  color: white !important;
+  font-size: 18px !important;
+  margin-top: 3px !important;
 }
 
 .claim-container button {
-  margin-left: auto;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.06);
+  margin-left: auto !important;
+  background: rgba(255,255,255,0.04) !important;
+  border: 1px solid rgba(255,255,255,0.06) !important;
   border-radius: 14px;
   width: 42px;
   height: 42px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .claim-container button img {
-  width: 22px;
+  width: 22px !important;
 }
 
-/* History container */
 .history-container {
-  margin-top: 14px;
-  padding: 14px 12px;
-  padding-bottom: 22px;
+  margin-top: 14px !important;
+  padding: 14px 12px !important;
+  padding-bottom: 22px !important;
 }
 
-.history-container > p:first-of-type {
-  float: right;
-  margin: 0;
-  color: rgb(30,88,215);
-  font-size: 12px;
-  cursor: pointer;
+.history-container > p:nth-of-type(1) {
+  float: none !important;
+  margin: 0 !important;
+  text-align: right;
+  color: rgb(30,88,215) !important;
+  font-size: 12px !important;
 }
 
-.history-container > p:last-of-type {
-  margin: -14px 0 12px;
-  color: #6e6e6e;
-  font-size: 12px;
+.history-container > p:nth-of-type(2) {
+  margin: -14px 0 12px !important;
+  color: #6e6e6e !important;
+  font-size: 12px !important;
   letter-spacing: 0.5px;
 }
 
-/* Transaction styles */
 .transaction-container {
-  margin: 8px 0;
-  padding: 10px 0;
-  display: flex;
-  flex-wrap: wrap;
+  margin: 8px 0 !important;
+  padding: 10px 0 !important;
+  display: grid !important;
+  grid-template-columns: 52px 1fr auto;
+  grid-template-rows: auto auto auto;
   align-items: center;
-  gap: 10px;
+  column-gap: 10px;
   border-radius: 16px;
-  position: relative;
 }
 
 .transaction-container > img {
-  width: 48px;
-  border-radius: 12px;
+  width: 48px !important;
+  grid-column: 1;
+  grid-row: 1 / 3;
 }
 
 .name-transaction {
-  flex: 1;
-  margin: 0;
-  font-size: 14px;
-  color: white;
+  grid-column: 2;
+  grid-row: 1;
+  margin: 0 !important;
+  font-size: 14px !important;
+  color: white !important;
 }
 
 .date-transaction {
-  width: 100%;
-  margin: 3px 0 0 58px;
-  font-size: 11px;
-  color: rgba(255,255,255,0.45);
+  grid-column: 2;
+  grid-row: 2;
+  margin: 3px 0 0 !important;
+  font-size: 11px !important;
+  color: rgba(255,255,255,0.45) !important;
 }
 
 .sum-transaction {
-  margin: 0;
+  grid-column: 3;
+  grid-row: 1;
+  margin: 0 !important;
   text-align: right;
-  font-size: 14px;
+  font-size: 14px !important;
   font-weight: 600;
 }
 
 .token-transaction {
-  margin: 0;
+  grid-column: 3;
+  grid-row: 2;
+  margin: 3px 0 0 !important;
   text-align: right;
-  font-size: 11px;
-  color: rgba(255,255,255,0.45);
+  font-size: 11px !important;
+  color: rgba(255,255,255,0.45) !important;
 }
 
 .transaction-container hr {
-  width: 100%;
-  margin: 10px 0 0;
-  border: 0;
-  height: 1px;
-  background: rgba(255,255,255,0.06);
+  grid-column: 1 / -1;
+  grid-row: 3;
+  width: 100% !important;
+  margin: 10px 0 0 !important;
+  border: 0 !important;
+  height: 1px !important;
+  background: rgba(255,255,255,0.06) !important;
 }
-
-.sum-transaction.claim { color: #4f9e3e; }
-.sum-transaction.deposit { color: #1e58d7; }
-.sum-transaction.withdraw { color: #ff4d4d; }
 
 .tab-panel {
-  padding-bottom: 130px;
-  background: #06080d;
+  padding-bottom: 130px !important;
 }
 
-/* Wallet modals */
-.wallet-modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.72);
-  z-index: 9999;
-  display: flex;
+/* ===== FINAL PREMIUM PROFILE UI END ===== */
+
+
+
+/* ===== FIX PROFILE BACKGROUND + CLAIM ROW ===== */
+.profile-header,
+.tab-panel {
+  background: #06080d !important;
+}
+
+.claim-container {
+  display: grid !important;
+  grid-template-columns: 52px 1fr 44px;
+  grid-template-rows: 1fr 1fr;
   align-items: center;
-  justify-content: center;
-  padding: 18px;
 }
 
-.wallet-modal {
-  width: 100%;
-  max-width: 360px;
-  background: linear-gradient(180deg, #14161d 0%, #0f1016 100%);
-  border: 1px solid rgba(30, 88, 215, 0.35);
-  border-radius: 24px;
-  padding: 20px;
-  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.45);
-  position: relative;
+.claim-container > img {
+  grid-column: 1;
+  grid-row: 1 / 3;
 }
 
-.wallet-modal-close {
-  position: absolute;
-  top: 12px;
-  right: 14px;
-  background: transparent;
-  border: none;
-  color: white;
-  font-size: 28px;
-  cursor: pointer;
+.claim-container p:nth-of-type(1) {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: end;
 }
 
-.wallet-modal-title {
-  font-size: 22px;
-  margin: 0 0 8px;
-  color: white;
+.claim-container p:nth-of-type(2) {
+  grid-column: 2;
+  grid-row: 2;
+  align-self: start;
 }
 
-.wallet-modal-note {
-  font-size: 13px;
-  line-height: 1.35;
-  color: #8b8f9c;
+.claim-container button {
+  grid-column: 3;
+  grid-row: 1 / 3;
 }
 
-.wallet-modal-label {
-  margin-top: 14px;
-  margin-bottom: 6px;
-  color: #6e6e6e;
-  font-size: 12px;
+</style>
+
+
+<style scoped>
+.sum-transaction.claim {
+    color: #4f9e3e;
 }
 
-.wallet-modal-value {
-  background: #111217;
-  border: 1px solid rgba(30, 88, 215, 0.25);
-  border-radius: 14px;
-  padding: 10px;
-  color: white;
-  font-size: 12px;
-  word-break: break-all;
+.sum-transaction.deposit {
+    color: #1e58d7;
 }
 
-.wallet-modal-input {
-  width: 100%;
-  box-sizing: border-box;
-  background: #111217;
-  border: 1px solid rgba(30, 88, 215, 0.25);
-  border-radius: 14px;
-  padding: 12px;
-  color: white;
-  font-size: 14px;
-  outline: none;
+.sum-transaction.withdraw {
+    color: #ff4d4d;
 }
 
-.wallet-modal-input:focus {
-  border-color: rgba(30, 88, 215, 0.75);
-}
 
-.wallet-modal-submit {
-  width: 100%;
-  margin-top: 18px;
-  height: 46px;
-  border-radius: 16px;
-  border: 1px solid rgb(30, 88, 215);
-  background: rgb(30, 88, 215);
-  color: white;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.wallet-modal-submit:disabled {
-  opacity: 0.65;
-  cursor: not-allowed;
-}
-
-.wallet-modal-row {
-  display: flex;
-  gap: 8px;
-  align-items: stretch;
-}
-
-.wallet-modal-row .wallet-modal-value {
-  flex: 1;
-  margin: 0;
-}
-
-.wallet-copy-btn {
-  min-width: 64px;
-  border-radius: 14px;
-  border: 1px solid rgb(30, 88, 215);
-  background: #111217;
-  color: rgb(30, 88, 215);
-  font-size: 13px;
-  cursor: pointer;
-}
-
-.wallet-modal-error {
-  color: #ff5a5a;
-  font-size: 13px;
-  margin-top: 12px;
-}
-
-.wallet-modal-success {
-  color: #4f9e3e;
-  font-size: 13px;
-  margin-top: 12px;
-}
-
-/* Gifts styles */
-.gifts-wrapper {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  padding: 12px;
-}
-
-.gifts-container {
-  width: calc(33.333% - 8px);
-  text-align: center;
-}
-
-.gift-card {
-  width: 100%;
-  background: #111217;
-  border: 1px solid rgba(30,88,215,0.2);
-  border-radius: 16px;
-  padding: 0;
-  cursor: pointer;
-  overflow: hidden;
-  transition: transform 0.2s;
-}
-
-.gift-card:hover {
-  transform: scale(0.98);
-}
-
-.title {
-  font-size: 12px;
-  margin-top: 6px;
-  margin-bottom: 2px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.number {
-  font-size: 10px;
-  color: #6e6e6e;
-  margin-top: 0;
-}
-
-.filter-btn {
-  width: calc(100% - 24px);
-  margin: 12px;
-  padding: 12px;
-  background: rgba(30, 88, 215, 0.15);
-  border: 1px solid rgba(30, 88, 215, 0.3);
-  border-radius: 16px;
-  color: rgb(30, 88, 215);
-  font-size: 14px;
-  cursor: pointer;
-}
-
-/* Loading spinner */
-.loading-spinner {
-  display: flex;
-  justify-content: center;
-  padding: 48px;
-}
-
-.spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid rgba(30,88,215,0.2);
-  border-top-color: rgb(30,88,215);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-.error-state, .empty-state {
-  text-align: center;
-  padding: 48px 24px;
-}
-
-.error-text, .empty-text {
-  color: white;
-  font-size: 16px;
-  margin-bottom: 8px;
-}
-
-.empty-subtext {
-  color: #8e8e93;
-  font-size: 13px;
-  margin-bottom: 20px;
-}
-
-.retry-btn, .empty-cta {
-  background: linear-gradient(180deg, #2f6cff, #1e58d7);
-  border: none;
-  border-radius: 16px;
-  padding: 12px 24px;
-  color: white;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-.empty-link {
-  text-decoration: none;
-}
-
-/* Gift modal */
-.gift-modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.85);
-  z-index: 10000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-}
-
-.gift-modal-card {
-  background: linear-gradient(180deg, #1a1c24 0%, #111217 100%);
-  border-radius: 28px;
-  max-width: 340px;
-  width: 100%;
-  padding: 20px;
-  border: 1px solid rgba(30,88,215,0.3);
-}
-
-.gift-modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 16px;
-}
-
-.gift-modal-title {
-  color: white;
-  font-size: 18px;
-  margin: 0;
-}
-
-.gift-modal-subtitle {
-  color: #8e8e93;
-  font-size: 12px;
-  margin: 4px 0 0;
-}
-
-.gift-modal-close {
-  background: rgba(255,255,255,0.1);
-  border: none;
-  width: 32px;
-  height: 32px;
-  border-radius: 16px;
-  color: white;
-  font-size: 18px;
-  cursor: pointer;
-}
-
-.gift-modal-image {
-  width: 100%;
-  border-radius: 20px;
-  margin-bottom: 16px;
-}
-
-.gift-modal-grid {
+/* ===== PREMIUM PROFILE HEADER STEP 1 ===== */
+.profile-header {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-}
-
-.gift-modal-item {
-  display: flex;
-  justify-content: space-between;
-  margin: 0;
-  font-size: 13px;
-}
-
-.gift-modal-label {
-  color: #6e6e6e;
-}
-
-.gift-modal-value {
-  color: white;
-  text-align: right;
-  word-break: break-word;
-  max-width: 60%;
-}
-
-.gift-modal-actions {
-  display: flex;
-  gap: 12px;
-  margin-top: 20px;
-}
-
-.gift-modal-primary,
-.gift-modal-secondary {
-  flex: 1;
-  padding: 12px;
-  border-radius: 16px;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-.gift-modal-primary {
-  background: rgb(30,88,215);
-  border: none;
-  color: white;
-}
-
-.gift-modal-secondary {
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
-  color: white;
-}
-
-.gift-modal-link {
-  flex: 1;
-  text-decoration: none;
-}
-
-/* Preloader */
-#preloader {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: #06080d;
-  z-index: 10001;
-  display: flex;
   align-items: center;
   justify-content: center;
+  padding-top: 18px;
+  padding-bottom: 18px;
 }
 
-#preloader.hidden {
-  display: none;
+.profile-img {
+  width: 150px !important;
+  height: 150px !important;
+  max-width: 150px !important;
+  object-fit: cover;
+  border-radius: 999px;
+  border: 1px solid rgba(30, 88, 215, 0.45);
+  box-shadow:
+    0 0 0 1px rgba(30, 88, 215, 0.18),
+    0 0 30px rgba(30, 88, 215, 0.22),
+    0 18px 40px rgba(0,0,0,0.35);
 }
 
-.loader {
-  color: rgb(30,88,215);
-  font-size: 14px;
+.username {
+  color: white;
+  font-size: 22px;
+  margin: 10px 0 0 0;
+  font-family: Geologica;
 }
+
+
+/* ===== FINAL PREMIUM PROFILE UI START ===== */
+
+.profile-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 22px 0 18px;
+  background: radial-gradient(circle at top, rgba(30,88,215,0.18), transparent 65%);
+}
+
+.profile-img {
+  width: 150px !important;
+  height: 150px !important;
+  max-width: 150px !important;
+  object-fit: cover;
+  border-radius: 999px;
+  padding: 8px;
+  background: #07080d;
+  border: 1px solid rgba(30,88,215,0.45);
+  box-shadow: 0 0 34px rgba(30,88,215,0.24), 0 18px 45px rgba(0,0,0,0.35);
+}
+
+.username {
+  color: white;
+  font-size: 22px;
+  margin: 10px 0 0;
+  font-family: Geologica;
+}
+
+.profile-tabs {
+  background: rgba(255,255,255,0.035);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 18px;
+  padding: 5px;
+  margin: 0 0 14px;
+}
+
+.tab-btn {
+  border-radius: 14px !important;
+}
+
+.rewards,
+.claim-container,
+.history-container {
+  background: linear-gradient(180deg, #141720 0%, #0d0f15 100%) !important;
+  border: 1px solid rgba(30,88,215,0.18) !important;
+  border-radius: 24px !important;
+  box-shadow: 0 18px 44px rgba(0,0,0,0.34);
+}
+
+.rewards {
+  height: auto !important;
+  padding: 18px !important;
+}
+
+.rewards > img {
+  display: none !important;
+}
+
+.rewards > p:nth-of-type(1) {
+  margin: 0 !important;
+  color: #6e6e6e !important;
+  font-size: 12px !important;
+  letter-spacing: 0.5px;
+}
+
+.rewards > p:nth-of-type(2) {
+  margin: 8px 0 0 !important;
+  color: white !important;
+  font-size: 34px !important;
+  font-weight: 600;
+}
+
+.rewards > p:nth-of-type(3) {
+  margin: -4px 0 14px !important;
+  color: rgba(255,255,255,0.72) !important;
+  font-size: 13px !important;
+}
+
+.rewards .btn-container {
+  display: flex !important;
+  gap: 10px;
+  margin-top: 12px !important;
+}
+
+.balance-btn,
+.balance-btn-active {
+  width: 50% !important;
+  height: 54px !important;
+  margin: 0 !important;
+  border-radius: 18px !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.balance-btn-active {
+  background: linear-gradient(180deg, #2f6cff, #1e58d7) !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+  box-shadow: 0 12px 30px rgba(30,88,215,0.32);
+}
+
+.balance-btn {
+  background: rgba(255,255,255,0.045) !important;
+  border: 1px solid rgba(255,255,255,0.07) !important;
+}
+
+.balance-btn img,
+.balance-btn-active img {
+  width: 20px !important;
+  margin: 0 !important;
+}
+
+.balance-btn p,
+.balance-btn-active p {
+  margin: 0 !important;
+}
+
+.claim-container {
+  height: 72px !important;
+  margin-top: 14px !important;
+  padding: 0 14px !important;
+  display: flex !important;
+  align-items: center;
+}
+
+.claim-container > img {
+  width: 48px !important;
+  margin: 0 12px 0 0 !important;
+}
+
+.claim-container p {
+  margin: 0 !important;
+}
+
+.claim-container p:nth-of-type(1) {
+  color: #6e6e6e !important;
+  font-size: 12px !important;
+}
+
+.claim-container p:nth-of-type(2) {
+  color: white !important;
+  font-size: 18px !important;
+  margin-top: 3px !important;
+}
+
+.claim-container button {
+  margin-left: auto !important;
+  background: rgba(255,255,255,0.04) !important;
+  border: 1px solid rgba(255,255,255,0.06) !important;
+  border-radius: 14px;
+  width: 42px;
+  height: 42px;
+}
+
+.claim-container button img {
+  width: 22px !important;
+}
+
+.history-container {
+  margin-top: 14px !important;
+  padding: 14px 12px !important;
+  padding-bottom: 22px !important;
+}
+
+.history-container > p:nth-of-type(1) {
+  float: none !important;
+  margin: 0 !important;
+  text-align: right;
+  color: rgb(30,88,215) !important;
+  font-size: 12px !important;
+}
+
+.history-container > p:nth-of-type(2) {
+  margin: -14px 0 12px !important;
+  color: #6e6e6e !important;
+  font-size: 12px !important;
+  letter-spacing: 0.5px;
+}
+
+.transaction-container {
+  margin: 8px 0 !important;
+  padding: 10px 0 !important;
+  display: grid !important;
+  grid-template-columns: 52px 1fr auto;
+  grid-template-rows: auto auto auto;
+  align-items: center;
+  column-gap: 10px;
+  border-radius: 16px;
+}
+
+.transaction-container > img {
+  width: 48px !important;
+  grid-column: 1;
+  grid-row: 1 / 3;
+}
+
+.name-transaction {
+  grid-column: 2;
+  grid-row: 1;
+  margin: 0 !important;
+  font-size: 14px !important;
+  color: white !important;
+}
+
+.date-transaction {
+  grid-column: 2;
+  grid-row: 2;
+  margin: 3px 0 0 !important;
+  font-size: 11px !important;
+  color: rgba(255,255,255,0.45) !important;
+}
+
+.sum-transaction {
+  grid-column: 3;
+  grid-row: 1;
+  margin: 0 !important;
+  text-align: right;
+  font-size: 14px !important;
+  font-weight: 600;
+}
+
+.token-transaction {
+  grid-column: 3;
+  grid-row: 2;
+  margin: 3px 0 0 !important;
+  text-align: right;
+  font-size: 11px !important;
+  color: rgba(255,255,255,0.45) !important;
+}
+
+.transaction-container hr {
+  grid-column: 1 / -1;
+  grid-row: 3;
+  width: 100% !important;
+  margin: 10px 0 0 !important;
+  border: 0 !important;
+  height: 1px !important;
+  background: rgba(255,255,255,0.06) !important;
+}
+
+.tab-panel {
+  padding-bottom: 130px !important;
+}
+
+/* ===== FINAL PREMIUM PROFILE UI END ===== */
+
+
+
+/* ===== FIX PROFILE BACKGROUND + CLAIM ROW ===== */
+.profile-header,
+.tab-panel {
+  background: #06080d !important;
+}
+
+.claim-container {
+  display: grid !important;
+  grid-template-columns: 52px 1fr 44px;
+  grid-template-rows: 1fr 1fr;
+  align-items: center;
+}
+
+.claim-container > img {
+  grid-column: 1;
+  grid-row: 1 / 3;
+}
+
+.claim-container p:nth-of-type(1) {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: end;
+}
+
+.claim-container p:nth-of-type(2) {
+  grid-column: 2;
+  grid-row: 2;
+  align-self: start;
+}
+
+.claim-container button {
+  grid-column: 3;
+  grid-row: 1 / 3;
+}
+
 </style>

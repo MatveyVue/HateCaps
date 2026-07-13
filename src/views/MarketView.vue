@@ -116,19 +116,15 @@
           <p style="margin-top: 40px; color: white;">Top</p>
         </button>
       </RouterLink>
-      <RouterLink to="/games">
+      <RouterLink to="/staking">
     <button class="game" @click="triggerMediumHaptic">
-        <img style="position: absolute; margin-left: -23px; margin-top: -4px;" src="https://github.com/MatveyVue/icopn/blob/main/Game.PNG?raw=true" width="45px"></img>
-        <p style="margin-top: 40px;">Game</p>
+        <img style="position: absolute; margin-left: -37px; margin-top: 2px;" src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/staking.PNG?raw=true" width="75px">
+        <p style="margin-top: 40px;">Staking</p>
     </button>
     </RouterLink>
       <RouterLink to="/profile">
         <button class="profile" @click="triggerMediumHaptic">
-          <img
-            style="position: absolute; margin-left: -18px;"
-            src="https://github.com/MatveyVue/icopn/blob/main/Profile.png?raw=true"
-            width="35px"
-          />
+          <img style="position: absolute; margin-left: -18px;" src="https://github.com/MatveyVue/icopn/blob/main/Profile.png?raw=true" width="35px"/>
           <p style="margin-top: 40px;">Profile</p>
         </button>
       </RouterLink>

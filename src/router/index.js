@@ -26,24 +26,9 @@ const router = createRouter({
       component: () => import('../views/TokenView.vue'),
     },
     {
-      path: '/games',
-      name: 'games',
-      component: () => import('../views/GameView.vue'),
-    },
-    {
-      path: '/game',
-      name: 'game',
-      component: () => import('../views/Game.vue'),
-    },
-    {
-      path: '/BombRating',
-      name: 'BombRating',
-      component: () => import('../rating/BombRating.vue'),
-    },
-    {
-      path: '/test',
-      name: 'test',
-      component: () => import('../views/TestView.vue'),
+      path: '/staking',
+      name: 'staking',
+      component: () => import('../views/StakingView.vue'),
     },
     {
       path: '/jollychimp',

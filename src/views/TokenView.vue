@@ -6,10 +6,10 @@
 <center>
 <div class="top-rating">
 <RouterLink to="/">
-    <button class="stars-rat">Stars</button>
+    <button style="background-color: #0a0b0d;" class="stars-rat">Stars</button>
 </RouterLink>
 <RouterLink to="token">
-    <button style="background-color: #181818; color: rgb(238, 238, 238);" class="token-rat">Token</button>
+    <button style="background-color: #111217; color: rgb(238, 238, 238);" class="token-rat">Token</button>
 </RouterLink>
 </div>
 </center>
@@ -114,10 +114,10 @@
         <p style="margin-top: 40px;">Top</p>
     </button>
 </RouterLink>
-<RouterLink to="/games">
+<RouterLink to="/staking">
     <button class="game" @click="triggerMediumHaptic">
-        <img style="position: absolute; margin-left: -23px; margin-top: -4px;" src="https://github.com/MatveyVue/icopn/blob/main/Game.PNG?raw=true" width="45px"></img>
-        <p style="margin-top: 40px;">Game</p>
+        <img style="position: absolute; margin-left: -37px; margin-top: 2px;" src="https://github.com/MatveyVue/Profiles-Telegram/blob/main/staking.PNG?raw=true" width="75px"></img>
+        <p style="margin-top: 40px;">Staking</p>
     </button>
 </RouterLink>
 <RouterLink to="/profile">
@@ -169,7 +169,7 @@ export default {
         // Адрес для 5-го места (специальная аватарка)
         '0:027749cd26265ca584c6ac7f7fce9ebfb1449556a88122865eebd68af8b2d0ce': 'https://github.com/MatveyVue/Profiles-Telegram/blob/main/Webby.jpg?raw=true',
 
-        '0:0d2f99277afb3f3adcfe7c3503d07b4e02d5afca566b78e27fc175e30685cbda': 'https://github.com/MatveyVue/Profiles-Telegram/blob/main/scmd.jpg?raw=true',
+        '0:0c3241400f8877b8e57d5c4f88a55de96f4202182978ca034f8129698824d5f5': 'https://github.com/MatveyVue/Profiles-Telegram/blob/main/scmd.jpg?raw=true',
       },
       // Добавляем positionAvatars, так как на него есть ссылка в getAvatar
       positionAvatars: {
@@ -178,7 +178,7 @@ export default {
         3: 'https://github.com/MatveyVue/Profiles-Telegram/blob/main/holders.jpg?raw=true',
         4: 'https://github.com/MatveyVue/Profiles-Telegram/blob/main/Webby.jpg?raw=true',
         5: 'https://github.com/MatveyVue/Profiles-Telegram/blob/main/Rstm.jpg?raw=true',
-        9: 'https://github.com/MatveyVue/Profiles-Telegram/blob/main/scmd.jpg?raw=true',
+        8: 'https://github.com/MatveyVue/Profiles-Telegram/blob/main/scmd.jpg?raw=true',
       }
     }
   },
